@@ -2,7 +2,10 @@ import 'package:currency_text_input_formatter/currency_text_input_formatter.dart
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:kantongku/component/modal.dart';
 import 'package:kantongku/component/text_style.dart';
+import 'package:kantongku/repository/bill_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddBillPage extends StatefulWidget {
   const AddBillPage({super.key});
@@ -13,6 +16,7 @@ class AddBillPage extends StatefulWidget {
 
 class _AddBillPageState extends State<AddBillPage> {
   String selectedDate = '';
+  String userId = '';
   TextEditingController dateCtl = TextEditingController();
   TextEditingController nameCtl = TextEditingController();
   TextEditingController amountCtl = TextEditingController();
@@ -22,6 +26,12 @@ class _AddBillPageState extends State<AddBillPage> {
     decimalDigits: 0,
     symbol: 'Rp ',
   );
+
+  @override
+  void initState() {
+    getUserId();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -254,7 +264,17 @@ class _AddBillPageState extends State<AddBillPage> {
 
   Widget sendButton(deviceWidth) {
     return ElevatedButton(
-        onPressed: () {},
+        onPressed: () async {
+          GlobalModal.loadingModal(deviceWidth, context);
+          BillRepository.addData(
+            context,
+            userId,
+            selectedDate,
+            nameCtl.text,
+            amountFormatter.getUnformattedValue().toString(),
+            descCtl.text,
+          );
+        },
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: deviceWidth / 50),
           child: Text(
@@ -262,5 +282,13 @@ class _AddBillPageState extends State<AddBillPage> {
             style: TextStyleComp.mediumBoldText(context),
           ),
         ));
+  }
+
+  getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      userId = prefs.getString('id')!;
+    });
   }
 }

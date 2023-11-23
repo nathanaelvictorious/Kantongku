@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:kantongku/component/snackbar.dart';
@@ -8,7 +7,7 @@ import 'package:kantongku/ui/navbar/navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserRepository {
-  static String urlServer = 'http://192.168.1.7:8000/api';
+  static String urlServer = 'http://192.168.1.8:8000/api';
 
   static Future register(context, name, email, username, password) async {
     Uri url = Uri.parse("$urlServer/users");
@@ -62,11 +61,8 @@ class UserRepository {
       var jsonResponse = jsonDecode(response.body);
 
       if (response.statusCode == 200 && jsonResponse['id'] != null) {
-        Navigator.pop(context);
         prefs.setString('id', jsonResponse['id'].toString());
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => (const Navbar())));
-        // return await getUser(context);
+        return await getUser(context);
       } else {
         Navigator.pop(context);
         GlobalSnackBar.show(context, 'Username atau password salah!');
@@ -78,33 +74,32 @@ class UserRepository {
     }
   }
 
-  static Future getUser(context) async {
+  static Future<User?> getUser(context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String? userId = prefs.getString('id');
     Uri url = Uri.parse("$urlServer/users/$userId");
 
-    try {
-      var response = await post(
-        url,
-        headers: {
-          'Accept': 'application/json',
-        },
-        body: {
-          "userId": userId,
-        },
-      );
+    var response = await get(
+      url,
+      headers: {
+        'Accept': 'application/json',
+      },
+    );
 
-      if (response.statusCode == 200) {
-        var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
 
-        return User.createFromJson(jsonResponse);
-      } else {
-        GlobalSnackBar.show(context, 'eror');
-      }
-      return null;
-    } catch (e) {
-      return null;
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const Navbar()),
+          (Route<dynamic> route) => false);
+      return User.createFromJson(jsonResponse);
+    } else {
+      var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+
+      Navigator.pop(context);
+      GlobalSnackBar.show(context, jsonResponse.toString());
     }
+    return null;
   }
 }
