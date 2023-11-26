@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:kantongku/component/color.dart';
 import 'package:kantongku/component/text_style.dart';
-import 'package:kantongku/model/bill_model.dart';
-import 'package:kantongku/repository/bill_repository.dart';
-import 'package:kantongku/ui/bill/add_bill_page.dart';
-import 'package:kantongku/ui/bill/detail_bill_page.dart';
+import 'package:kantongku/model/budget_model.dart';
+import 'package:kantongku/repository/budget_repository.dart';
+import 'package:kantongku/ui/budget/add_budget_page.dart';
+import 'package:kantongku/ui/budget/detail_budget_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class BillPage extends StatefulWidget {
-  const BillPage({super.key});
+class BudgetPage extends StatefulWidget {
+  const BudgetPage({super.key});
 
   @override
-  State<BillPage> createState() => _BillPageState();
+  State<BudgetPage> createState() => _BudgetPageState();
 }
 
-class _BillPageState extends State<BillPage> {
-  String userId = '';
+class _BudgetPageState extends State<BudgetPage> {
+  String userId = '', filterDateText = '', filterDateTextBahasa = '';
 
   @override
   void initState() {
     getUserId();
+    filterDateText = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    filterDateTextBahasa =
+        DateFormat('dd MMMM yyyy', 'ID').format(DateTime.now());
     super.initState();
   }
 
@@ -28,21 +32,10 @@ class _BillPageState extends State<BillPage> {
   Widget build(BuildContext context) {
     var deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor, //change your color here
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          'Tagihan',
-          style: TextStyleComp.mediumBoldPrimaryColorText(context),
-        ),
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const AddBillPage();
+            return const AddBudgetPage();
           })).then((value) {
             setState(() {});
           });
@@ -56,29 +49,84 @@ class _BillPageState extends State<BillPage> {
         onRefresh: refreshData,
         child: ListView(
           children: [
-            billPageWidgets(deviceWidth),
+            titlePage(deviceWidth),
+            datePickerWidget(deviceWidth),
+            budgetPageWidgets(deviceWidth),
           ],
         ),
       ),
     );
   }
 
-  Widget billPageWidgets(deviceWidth) {
+  Widget titlePage(deviceWidth) {
+    return Padding(
+      padding: EdgeInsets.all(deviceWidth / 20),
+      child: Text(
+        'Manajemen Anggaran',
+        style: TextStyleComp.bigBoldPrimaryColorText(context),
+      ),
+    );
+  }
+
+  Widget datePickerWidget(deviceWidth) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: deviceWidth / 20),
+      child: GestureDetector(
+        onTap: () async {
+          DateTime? date = DateTime(1900);
+          FocusScope.of(context).requestFocus(FocusNode());
+
+          date = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2020),
+            lastDate: DateTime.now(),
+          );
+
+          filterDateText = DateFormat('yyyy-MM-dd').format(date!);
+          filterDateTextBahasa = DateFormat('dd MMMM yyyy', 'id').format(date);
+          setState(() {});
+        },
+        child: Container(
+          padding: EdgeInsets.all(deviceWidth / 20),
+          decoration: BoxDecoration(
+              color: GlobalColors.lighterLightBlue,
+              borderRadius:
+                  BorderRadius.all(Radius.circular(deviceWidth / 50))),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                filterDateTextBahasa,
+                style: TextStyleComp.mediumBoldText(context),
+              ),
+              Icon(
+                FontAwesomeIcons.circleChevronDown,
+                size: deviceWidth / 20,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget budgetPageWidgets(deviceWidth) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: deviceWidth / 20),
       child: FutureBuilder(
-          future: BillRepository.getData(userId),
+          future: BudgetRepository.getData(userId, filterDateText),
           builder: ((context, snapshot) {
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-              List<Bill> billItems = snapshot.data!;
+              List<Budget> budgetItems = snapshot.data!;
               return Padding(
                 padding: EdgeInsets.only(bottom: deviceWidth / 5),
                 child: ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: billItems.length,
+                    itemCount: budgetItems.length,
                     itemBuilder: (context, index) {
-                      return card(context, deviceWidth, index, billItems);
+                      return card(context, deviceWidth, index, budgetItems);
                     }),
               );
             } else if (snapshot.connectionState == ConnectionState.waiting) {
@@ -86,7 +134,7 @@ class _BillPageState extends State<BillPage> {
             } else if (snapshot.hasData && snapshot.data!.isEmpty) {
               return Center(
                 child: Text(
-                  'Tidak ada data',
+                  'Belum ada anggaran',
                   style: TextStyleComp.smallBoldText(context),
                 ),
               );
@@ -120,13 +168,15 @@ class _BillPageState extends State<BillPage> {
       child: InkWell(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return DetailBillPage(
-                id: data[index].id,
-                name: data[index].name,
-                amount: data[index].amount,
-                dueDate: data[index].dueDate,
-                description: data[index].description,
-                isPaid: data[index].isPaid);
+            return DetailBudgetPage(
+              id: data[index].id,
+              title: data[index].title,
+              category: data[index].category,
+              date: data[index].date,
+              description: data[index].description,
+              spendTotal: data[index].spendTotal,
+              limit: data[index].limit,
+            );
           })).then((value) {
             setState(() {});
           });
@@ -158,9 +208,10 @@ class _BillPageState extends State<BillPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Jatuh Tempo: ${DateFormat('EEEE, dd MMMM yyyy', 'ID').format(DateFormat('yyyy-MM-dd').parse(data[index].dueDate))}',
+                        DateFormat('EEEE, dd MMMM yyyy', 'ID').format(
+                            DateFormat('yyyy-MM-dd').parse(data[index].date)),
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyleComp.smallBoldRedText(context),
+                        style: TextStyleComp.smallBoldPrimaryColorText(context),
                       ),
                       SizedBox(
                         height: deviceWidth / 80,
@@ -168,7 +219,7 @@ class _BillPageState extends State<BillPage> {
                       SizedBox(
                         width: deviceWidth / 1.3,
                         child: Text(
-                          data[index].name,
+                          data[index].title,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyleComp.mediumBoldText(context),
                         ),
@@ -179,10 +230,21 @@ class _BillPageState extends State<BillPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(),
-                            Text(
-                              'Rp ${NumberFormat('#,##0', 'ID').format(data[index].amount)}',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyleComp.mediumBoldText(context),
+                            Row(
+                              children: [
+                                Text(
+                                  'Rp ${NumberFormat('#,##0', 'ID').format(data[index].spendTotal)}/',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyleComp.mediumBoldText(context),
+                                ),
+                                Text(
+                                  'Rp ${NumberFormat('#,##0', 'ID').format(data[index].limit)}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style:
+                                      TextStyleComp.mediumBoldPrimaryColorText(
+                                          context),
+                                ),
+                              ],
                             ),
                           ],
                         ),

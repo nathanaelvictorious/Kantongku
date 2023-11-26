@@ -4,7 +4,7 @@ class Bill {
   final int amount;
   final String dueDate;
   final String description;
-  final int isPaid;
+  final bool isPaid;
 
   Bill({
     required this.id,

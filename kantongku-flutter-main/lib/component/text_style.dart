@@ -78,6 +78,15 @@ class TextStyleComp {
         color: Colors.grey, fontWeight: FontWeight.bold, fontSize: kWidth / 30);
   }
 
+  static smallBoldPrimaryColorText(context) {
+    var kWidth = MediaQuery.of(context).size.width;
+    return TextStyle(
+      color: Theme.of(context).primaryColor,
+      fontWeight: FontWeight.bold,
+      fontSize: kWidth / 30,
+    );
+  }
+
   static smallBoldText(context) {
     var kWidth = MediaQuery.of(context).size.width;
     return TextStyle(
@@ -99,7 +108,7 @@ class TextStyleComp {
     return TextStyle(
       fontWeight: FontWeight.bold,
       fontSize: kWidth / 25,
-      color: Theme.of(context).primaryColor,
+      color: Colors.red,
     );
   }
 
@@ -134,12 +143,19 @@ class TextStyleComp {
         fontSize: kWidth / 25);
   }
 
+  static mediumPrimaryColorText(context) {
+    var kWidth = MediaQuery.of(context).size.width;
+
+    return TextStyle(
+        color: Theme.of(context).primaryColor, fontSize: kWidth / 25);
+  }
+
   static mediumRedText(context) {
     var kWidth = MediaQuery.of(context).size.width;
 
     return TextStyle(
       fontSize: kWidth / 25,
-      color: Theme.of(context).primaryColor,
+      color: Colors.red,
     );
   }
 

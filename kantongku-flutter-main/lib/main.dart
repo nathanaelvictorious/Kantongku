@@ -17,22 +17,24 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: GlobalMaterialAppStyle.materialApp(context),
-      home: FutureBuilder(
-          future: SharedPreferences.getInstance(),
-          builder: (context, prefs) {
-            var dataPrefs = prefs.data;
-            if (prefs.hasData) {
-              if (dataPrefs!.getString('id') != null) {
-                return const Navbar(); // User Home Page
+      home: Scaffold(
+        body: FutureBuilder(
+            future: SharedPreferences.getInstance(),
+            builder: (context, prefs) {
+              var dataPrefs = prefs.data;
+              if (prefs.hasData) {
+                if (dataPrefs!.getString('id') != null) {
+                  return const Navbar(); // User Home Page
+                } else {
+                  return const LoginPage(); // Login Page
+                }
               } else {
-                return const LoginPage(); // Login Page
+                return const Center(
+                  child: CircularProgressIndicator(),
+                ); // Login Page
               }
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              ); // Login Page
-            }
-          }),
+            }),
+      ),
     );
   }
 }

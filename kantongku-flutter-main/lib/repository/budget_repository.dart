@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:kantongku/component/snackbar.dart';
-import 'package:kantongku/model/bill_model.dart';
+import 'package:kantongku/model/budget_model.dart';
 
-class BillRepository {
+class BudgetRepository {
   static String urlServer = 'http://192.168.1.8:8000/api';
 
-  static Future<List<Bill>> getData(userId) async {
-    Uri url = Uri.parse("$urlServer/bill-reminders/$userId");
+  static Future<List<Budget>> getData(userId, date) async {
+    Uri url = Uri.parse("$urlServer/budgets/$userId?date=$date");
 
     var response = await get(
       url,
@@ -19,32 +19,33 @@ class BillRepository {
 
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body) as List;
-      return jsonResponse.map((e) => Bill.createFromJson(e)).toList();
+      return jsonResponse.map((e) => Budget.createFromJson(e)).toList();
     }
     return [];
   }
 
   static Future addData(
-      context, userId, dueDate, name, amount, description) async {
+      context, userId, title, category, limit, description, date) async {
     try {
       Response response = await post(
-        Uri.parse("$urlServer/bill-reminders"),
+        Uri.parse("$urlServer/budgets"),
         body: {
           "user_id": userId,
-          "name": name,
-          "amount": amount,
-          "due_date": dueDate,
+          "title": title,
+          "category": category,
+          "limit": limit,
           "description": description,
+          "date": date,
         },
       );
       if (response.statusCode == 201) {
         Navigator.pop(context);
         Navigator.pop(context);
 
-        GlobalSnackBar.show(context, 'Tagihan berhasil ditambahkan.');
+        GlobalSnackBar.show(context, 'Anggaran berhasil ditambahkan.');
       } else {
         Navigator.pop(context);
-        GlobalSnackBar.show(context, 'Tagihan gagal ditambahkan');
+        GlobalSnackBar.show(context, 'Anggaran gagal ditambahkan');
       }
     } catch (e) {
       Navigator.pop(context);
@@ -52,17 +53,14 @@ class BillRepository {
     }
   }
 
-  static Future updateData(context, billReminderId, dueDate, name, amount,
-      description, isPaid) async {
+  static Future updateData(context, budgetId, title, limit, description) async {
     try {
       Response response = await put(
-        Uri.parse("$urlServer/bill-reminders/$billReminderId"),
+        Uri.parse("$urlServer/budgets/$budgetId"),
         body: {
-          "name": name,
-          "amount": amount,
-          "due_date": dueDate,
+          "title": title,
+          "limit": limit,
           "description": description,
-          "is_paid_off": isPaid,
         },
       );
 
@@ -71,10 +69,10 @@ class BillRepository {
         Navigator.pop(context);
         Navigator.pop(context);
 
-        GlobalSnackBar.show(context, 'Tagihan berhasil diubah.');
+        GlobalSnackBar.show(context, 'Anggaran berhasil diubah.');
       } else {
         Navigator.pop(context);
-        GlobalSnackBar.show(context, 'Tagihan gagal diubah');
+        GlobalSnackBar.show(context, 'Anggaran gagal diubah');
       }
     } catch (e) {
       Navigator.pop(context);
@@ -82,12 +80,12 @@ class BillRepository {
     }
   }
 
-  static Future deleteData(context, billReminderId) async {
+  static Future deleteData(context, budgetId) async {
     try {
       Response response = await delete(
-        Uri.parse("$urlServer/bill-reminders/$billReminderId"),
+        Uri.parse("$urlServer/budgets/$budgetId"),
         body: {
-          "id": billReminderId,
+          "id": budgetId,
         },
       );
       if (response.statusCode == 200) {
@@ -95,11 +93,11 @@ class BillRepository {
         Navigator.pop(context);
         Navigator.pop(context);
 
-        GlobalSnackBar.show(context, 'Tagihan berhasil dihapus.');
+        GlobalSnackBar.show(context, 'Anggaran berhasil dihapus.');
       } else {
         Navigator.pop(context);
         Navigator.pop(context);
-        GlobalSnackBar.show(context, 'Tagihan gagal dihapus.');
+        GlobalSnackBar.show(context, 'Anggaran gagal dihapus.');
       }
     } catch (e) {
       Navigator.pop(context);

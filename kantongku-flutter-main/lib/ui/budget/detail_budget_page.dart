@@ -2,32 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kantongku/component/modal.dart';
 import 'package:kantongku/component/text_style.dart';
-import 'package:kantongku/repository/bill_repository.dart';
-import 'package:kantongku/ui/bill/update_bill_page.dart';
+import 'package:kantongku/repository/budget_repository.dart';
+import 'package:kantongku/ui/budget/update_budget_page.dart';
 
-class DetailBillPage extends StatefulWidget {
+class DetailBudgetPage extends StatefulWidget {
   final String id;
-  final String name;
-  final int amount;
-  final String dueDate;
+  final String category;
+  final String title;
+  final int spendTotal;
+  final int limit;
+  final String date;
   final String description;
-  final bool isPaid;
 
-  const DetailBillPage({
+  const DetailBudgetPage({
     required this.id,
-    required this.name,
-    required this.amount,
-    required this.dueDate,
+    required this.category,
+    required this.title,
+    required this.spendTotal,
+    required this.limit,
+    required this.date,
     required this.description,
-    required this.isPaid,
     super.key,
   });
 
   @override
-  State<DetailBillPage> createState() => _DetailBillPageState();
+  State<DetailBudgetPage> createState() => _DetailBudgetPageState();
 }
 
-class _DetailBillPageState extends State<DetailBillPage> {
+class _DetailBudgetPageState extends State<DetailBudgetPage> {
   @override
   Widget build(BuildContext context) {
     var deviceWidth = MediaQuery.of(context).size.width;
@@ -40,20 +42,20 @@ class _DetailBillPageState extends State<DetailBillPage> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'Detail Tagihan',
+          'Detail Anggaran',
           style: TextStyleComp.mediumBoldPrimaryColorText(context),
         ),
       ),
       body: ListView(
         children: [
-          detailBillWidgets(deviceWidth),
+          detailBudgetWidgets(deviceWidth),
           buttonWidgets(deviceWidth),
         ],
       ),
     );
   }
 
-  Widget detailBillWidgets(deviceWidth) {
+  Widget detailBudgetWidgets(deviceWidth) {
     return Padding(
       padding: EdgeInsets.all(deviceWidth / 20),
       child: IntrinsicHeight(
@@ -89,35 +91,34 @@ class _DetailBillPageState extends State<DetailBillPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Jatuh Tempo:',
+                              'Anggaran:',
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyleComp.mediumBoldRedText(context),
+                              style: TextStyleComp.mediumBoldText(context),
+                            ),
+                            Text(
+                              widget.title,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyleComp.mediumText(context),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: deviceWidth / 80,
+                      ),
+                      SizedBox(
+                        width: deviceWidth / 1.3,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Tanggal:',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyleComp.mediumBoldText(context),
                             ),
                             Text(
                               DateFormat('dd MMMM yyyy', 'ID').format(
-                                  DateFormat('yyyy-MM-dd')
-                                      .parse(widget.dueDate)),
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyleComp.mediumRedText(context),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: deviceWidth / 80,
-                      ),
-                      SizedBox(
-                        width: deviceWidth / 1.3,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Tagihan:',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyleComp.mediumBoldText(context),
-                            ),
-                            Text(
-                              widget.name,
+                                  DateFormat('yyyy-MM-dd').parse(widget.date)),
                               overflow: TextOverflow.ellipsis,
                               style: TextStyleComp.mediumText(context),
                             ),
@@ -129,38 +130,34 @@ class _DetailBillPageState extends State<DetailBillPage> {
                       ),
                       SizedBox(
                         width: deviceWidth / 1.3,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Nominal:',
+                              'Anggaran Terpakai:',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyleComp.mediumBoldText(context),
                             ),
-                            Text(
-                              'Rp ${NumberFormat('#,##0', 'ID').format(widget.amount)}',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyleComp.mediumText(context),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: deviceWidth / 80,
-                      ),
-                      SizedBox(
-                        width: deviceWidth / 1.3,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Sudah Dibayar:',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyleComp.mediumBoldText(context),
-                            ),
-                            Text(
-                              widget.isPaid ? 'Sudah' : 'Belum',
-                              style: TextStyleComp.mediumText(context),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Rp ${NumberFormat('#,##0', 'ID').format(widget.spendTotal)}/',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyleComp.mediumText(context),
+                                    ),
+                                    Text(
+                                      'Rp ${NumberFormat('#,##0', 'ID').format(widget.limit)}',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyleComp
+                                          .mediumBoldPrimaryColorText(context),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -233,13 +230,12 @@ class _DetailBillPageState extends State<DetailBillPage> {
                           onPressed: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return UpdateBillPage(
-                                  id: widget.id,
-                                  name: widget.name,
-                                  amount: widget.amount,
-                                  dueDate: widget.dueDate,
-                                  description: widget.description,
-                                  isPaid: widget.isPaid);
+                              return UpdateBudgetPage(
+                                id: widget.id,
+                                title: widget.title,
+                                limit: widget.limit.toString(),
+                                description: widget.description,
+                              );
                             })).then((value) {
                               setState(() {});
                             });
@@ -362,7 +358,7 @@ class _DetailBillPageState extends State<DetailBillPage> {
                             ),
                             onPressed: () {
                               GlobalModal.loadingModal(deviceWidth, context);
-                              BillRepository.deleteData(context, widget.id);
+                              BudgetRepository.deleteData(context, widget.id);
                             },
                             child: Padding(
                               padding: EdgeInsets.symmetric(

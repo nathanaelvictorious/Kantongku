@@ -25,6 +25,7 @@ class _TransactionPageState extends State<TransactionPage> {
     return ListView(
       children: [
         toBillPageButton(deviceWidth),
+        titlePage(deviceWidth),
       ],
     );
   }
@@ -48,7 +49,7 @@ class _TransactionPageState extends State<TransactionPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Halaman Data Tagihan',
+                'Daftar Tagihan',
                 style: TextStyleComp.mediumBoldText(context),
               ),
               Icon(
@@ -58,6 +59,16 @@ class _TransactionPageState extends State<TransactionPage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget titlePage(deviceWidth) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: deviceWidth / 20),
+      child: Text(
+        'Transaksi',
+        style: TextStyleComp.bigBoldPrimaryColorText(context),
       ),
     );
   }

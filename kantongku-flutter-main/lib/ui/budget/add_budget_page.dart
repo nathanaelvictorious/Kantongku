@@ -4,24 +4,25 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:kantongku/component/modal.dart';
 import 'package:kantongku/component/text_style.dart';
-import 'package:kantongku/repository/bill_repository.dart';
+import 'package:kantongku/repository/budget_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AddBillPage extends StatefulWidget {
-  const AddBillPage({super.key});
+class AddBudgetPage extends StatefulWidget {
+  const AddBudgetPage({super.key});
 
   @override
-  State<AddBillPage> createState() => _AddBillPageState();
+  State<AddBudgetPage> createState() => _AddBudgetPageState();
 }
 
-class _AddBillPageState extends State<AddBillPage> {
+class _AddBudgetPageState extends State<AddBudgetPage> {
   String selectedDate = '';
+  String selectedCategory = '';
   String userId = '';
   TextEditingController dateCtl = TextEditingController();
-  TextEditingController nameCtl = TextEditingController();
-  TextEditingController amountCtl = TextEditingController();
+  TextEditingController titleCtl = TextEditingController();
+  TextEditingController limitCtl = TextEditingController();
   TextEditingController descCtl = TextEditingController();
-  final CurrencyTextInputFormatter amountFormatter = CurrencyTextInputFormatter(
+  final CurrencyTextInputFormatter limitFormatter = CurrencyTextInputFormatter(
     locale: 'id',
     decimalDigits: 0,
     symbol: 'Rp ',
@@ -45,37 +46,93 @@ class _AddBillPageState extends State<AddBillPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          'Tambah Tagihan',
+          'Tambah Anggaran',
           style: TextStyleComp.mediumBoldPrimaryColorText(context),
         ),
       ),
-      body: addBillForm(deviceWidth),
-    );
-  }
-
-  Widget addBillForm(deviceWidth) {
-    return Padding(
-      padding: EdgeInsets.all(deviceWidth / 20),
-      child: ListView(
-        children: [
-          dateBilllTextFormField(deviceWidth),
-          nameBillTextFormField(deviceWidth),
-          amountBillTextFormField(deviceWidth),
-          descBillTextFormField(deviceWidth),
-          sendButton(deviceWidth),
-        ],
+      body: Padding(
+        padding: EdgeInsets.all(deviceWidth / 20),
+        child: addBugdetForm(deviceWidth),
       ),
     );
   }
 
-  Widget dateBilllTextFormField(deviceWidth) {
+  Widget addBugdetForm(deviceWidth) {
+    return ListView(
+      children: [
+        categoryDropdown(deviceWidth),
+        dateBudgetTextFormField(deviceWidth),
+        nameBudgetTextFormField(deviceWidth),
+        limitBudgetTextFormField(deviceWidth),
+        descBudgetTextFormField(deviceWidth),
+        sendButton(deviceWidth),
+      ],
+    );
+  }
+
+  Widget categoryDropdown(deviceWidth) {
     return Padding(
       padding: EdgeInsets.only(bottom: deviceWidth / 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Tanggal Tagihan',
+            'Kategori Anggaran',
+            style: TextStyleComp.mediumText(context),
+          ),
+          ButtonTheme(
+            alignedDropdown: true,
+            child: DropdownButtonFormField(
+                isExpanded: false,
+                items: [
+                  'Belanja',
+                  'Cicilan',
+                  'Hiburan',
+                  'Kesehatan',
+                  'Konsumsi',
+                ]
+                    .map(
+                      (e) => DropdownMenuItem(
+                        value: e,
+                        child: Text(e),
+                      ),
+                    )
+                    .toList(),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey.shade200,
+                  hintText: 'Pilih kategori anggaran',
+                  hintStyle: TextStyleComp.mediumText(context),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius:
+                        BorderRadius.all(Radius.circular(deviceWidth / 50)),
+                    borderSide:
+                        const BorderSide(color: Colors.white, width: 1.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius:
+                        BorderRadius.all(Radius.circular(deviceWidth / 50)),
+                    borderSide:
+                        const BorderSide(color: Colors.white, width: 1.0),
+                  ),
+                ),
+                onChanged: (value) {
+                  selectedCategory = value.toString();
+                }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget dateBudgetTextFormField(deviceWidth) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: deviceWidth / 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Tanggal',
             style: TextStyleComp.mediumText(context),
           ),
           TextFormField(
@@ -107,7 +164,7 @@ class _AddBillPageState extends State<AddBillPage> {
               ),
               filled: true,
               fillColor: Colors.grey.shade200,
-              hintText: 'Pilih tanggal tagihan',
+              hintText: 'Pilih tanggal anggaran',
               hintStyle: TextStyleComp.mediumText(context),
               enabledBorder: OutlineInputBorder(
                 borderRadius:
@@ -132,25 +189,25 @@ class _AddBillPageState extends State<AddBillPage> {
     );
   }
 
-  Widget nameBillTextFormField(deviceWidth) {
+  Widget nameBudgetTextFormField(deviceWidth) {
     return Padding(
       padding: EdgeInsets.only(bottom: deviceWidth / 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Nama Tagihan',
+            'Nama Anggaran',
             style: TextStyleComp.mediumText(context),
           ),
           TextFormField(
-            controller: nameCtl,
+            controller: titleCtl,
             autofocus: false,
             keyboardType: TextInputType.text,
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.grey.shade200,
-              hintText: 'Masukkan nama tagihan',
+              hintText: 'Masukkan nama anggaran',
               hintStyle: TextStyleComp.mediumText(context),
               enabledBorder: OutlineInputBorder(
                 borderRadius:
@@ -175,25 +232,25 @@ class _AddBillPageState extends State<AddBillPage> {
     );
   }
 
-  Widget amountBillTextFormField(deviceWidth) {
+  Widget limitBudgetTextFormField(deviceWidth) {
     return Padding(
       padding: EdgeInsets.only(bottom: deviceWidth / 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Nominal',
+            'Batas Anggaran',
             style: TextStyleComp.mediumText(context),
           ),
           TextFormField(
-            controller: amountCtl,
+            controller: limitCtl,
             autofocus: false,
             keyboardType: TextInputType.number,
-            inputFormatters: [amountFormatter],
+            inputFormatters: [limitFormatter],
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.grey.shade200,
-              hintText: 'Masukkan nominal tagihan',
+              hintText: 'Masukkan nominal batas anggaran',
               hintStyle: TextStyleComp.mediumText(context),
               enabledBorder: OutlineInputBorder(
                 borderRadius:
@@ -218,7 +275,7 @@ class _AddBillPageState extends State<AddBillPage> {
     );
   }
 
-  Widget descBillTextFormField(deviceWidth) {
+  Widget descBudgetTextFormField(deviceWidth) {
     return Padding(
       padding: EdgeInsets.only(bottom: deviceWidth / 20),
       child: Column(
@@ -266,13 +323,14 @@ class _AddBillPageState extends State<AddBillPage> {
     return ElevatedButton(
         onPressed: () async {
           GlobalModal.loadingModal(deviceWidth, context);
-          BillRepository.addData(
+          BudgetRepository.addData(
             context,
             userId,
-            selectedDate,
-            nameCtl.text,
-            amountFormatter.getUnformattedValue().toString(),
+            titleCtl.text,
+            selectedCategory,
+            limitFormatter.getUnformattedValue().toString(),
             descCtl.text,
+            selectedDate,
           );
         },
         child: Padding(

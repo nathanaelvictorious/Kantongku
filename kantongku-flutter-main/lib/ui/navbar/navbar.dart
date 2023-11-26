@@ -2,6 +2,7 @@ import 'package:custom_navigation_bar/custom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kantongku/component/text_style.dart';
+import 'package:kantongku/ui/budget/budget_page.dart';
 import 'package:kantongku/ui/login/login_page.dart';
 import 'package:kantongku/ui/transaction/transaction_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,7 +19,7 @@ class _NavbarState extends State<Navbar> {
   List<Widget> pageList = [
     const SizedBox(),
     const TransactionPage(),
-    const SizedBox(),
+    const BudgetPage(),
     const SizedBox(),
   ];
 
@@ -117,14 +118,14 @@ class _NavbarState extends State<Navbar> {
         ),
         CustomNavigationBarItem(
           selectedTitle: Text(
-            "Manajemen",
+            "Anggaran",
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: deviceWidth / 30,
                 color: Theme.of(context).primaryColor),
           ),
           title: Text(
-            "Manajemen",
+            "Anggaran",
             style: TextStyle(
               fontSize: deviceWidth / 30,
             ),
