@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:kantongku/component/material_style.dart';
 import 'package:kantongku/ui/navbar/navbar.dart';
 import 'package:kantongku/ui/login/login_page.dart';
+import 'package:month_year_picker/month_year_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   initializeDateFormatting('ID');
@@ -15,8 +18,14 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var deviceWidth = MediaQuery.of(context).size.width;
     return MaterialApp(
       theme: GlobalMaterialAppStyle.materialApp(context),
+      localizationsDelegates: const [
+        GlobalWidgetsLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        MonthYearPickerLocalizations.delegate,
+      ],
       home: Scaffold(
         body: FutureBuilder(
             future: SharedPreferences.getInstance(),
@@ -29,8 +38,11 @@ class MainApp extends StatelessWidget {
                   return const LoginPage(); // Login Page
                 }
               } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
+                return Center(
+                  child: SpinKitFadingCube(
+                    color: Theme.of(context).primaryColor,
+                    size: deviceWidth / 15,
+                  ),
                 ); // Login Page
               }
             }),

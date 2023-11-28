@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:kantongku/component/text_style.dart';
 
 class GlobalModal {
@@ -28,7 +29,10 @@ class GlobalModal {
                       SizedBox(
                         height: deviceWidth / 20,
                       ),
-                      const CircularProgressIndicator(),
+                      SpinKitFadingCube(
+                        color: Theme.of(context).primaryColor,
+                        size: deviceWidth / 15,
+                      ),
                     ],
                   ),
                 ),

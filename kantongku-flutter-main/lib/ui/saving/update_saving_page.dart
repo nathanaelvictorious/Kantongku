@@ -1,38 +1,41 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:kantongku/component/modal.dart';
-import 'package:kantongku/component/snackbar.dart';
 import 'package:kantongku/component/text_style.dart';
-import 'package:kantongku/repository/bill_repository.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:kantongku/repository/saving_repository.dart';
 
-class AddBillPage extends StatefulWidget {
-  const AddBillPage({super.key});
+class UpdateSavingPage extends StatefulWidget {
+  final String id;
+  final String title;
+  final String goalAmount;
+  final String description;
+  const UpdateSavingPage({
+    required this.id,
+    required this.title,
+    required this.goalAmount,
+    required this.description,
+    super.key,
+  });
 
   @override
-  State<AddBillPage> createState() => _AddBillPageState();
+  State<UpdateSavingPage> createState() => _UpdateSavingPageState();
 }
 
-class _AddBillPageState extends State<AddBillPage> {
-  String selectedDate = '';
-  String userId = '';
-  TextEditingController dateCtl = TextEditingController();
-  TextEditingController nameCtl = TextEditingController();
-  TextEditingController amountCtl = TextEditingController();
+class _UpdateSavingPageState extends State<UpdateSavingPage> {
+  TextEditingController titleCtl = TextEditingController();
+  TextEditingController goalCtl = TextEditingController();
   TextEditingController descCtl = TextEditingController();
-  final CurrencyTextInputFormatter amountFormatter = CurrencyTextInputFormatter(
+  final CurrencyTextInputFormatter goalFormatter = CurrencyTextInputFormatter(
     locale: 'id',
     decimalDigits: 0,
     symbol: 'Rp ',
   );
 
-  final addBillFormKey = GlobalKey<FormState>();
-
   @override
   void initState() {
-    getUserId();
+    titleCtl = TextEditingController(text: widget.title);
+    goalCtl = TextEditingController(text: widget.goalAmount);
+    descCtl = TextEditingController(text: widget.description);
     super.initState();
   }
 
@@ -48,115 +51,47 @@ class _AddBillPageState extends State<AddBillPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          'Tambah Tagihan',
+          'Update Tabungan',
           style: TextStyleComp.mediumBoldPrimaryColorText(context),
         ),
       ),
-      body: addBillForm(deviceWidth),
-    );
-  }
-
-  Widget addBillForm(deviceWidth) {
-    return Padding(
-      padding: EdgeInsets.all(deviceWidth / 20),
-      child: Form(
-        key: addBillFormKey,
-        child: ListView(
-          children: [
-            dateBilllTextFormField(deviceWidth),
-            nameBillTextFormField(deviceWidth),
-            amountBillTextFormField(deviceWidth),
-            descBillTextFormField(deviceWidth),
-            sendButton(deviceWidth),
-          ],
-        ),
+      body: Padding(
+        padding: EdgeInsets.all(deviceWidth / 20),
+        child: updateSavingForm(deviceWidth),
       ),
     );
   }
 
-  Widget dateBilllTextFormField(deviceWidth) {
+  Widget updateSavingForm(deviceWidth) {
+    return ListView(
+      children: [
+        nameSavingTextFormField(deviceWidth),
+        goalSavingTextFormField(deviceWidth),
+        descSavingTextFormField(deviceWidth),
+        sendButton(deviceWidth),
+      ],
+    );
+  }
+
+  Widget nameSavingTextFormField(deviceWidth) {
     return Padding(
       padding: EdgeInsets.only(bottom: deviceWidth / 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Tanggal Jatuh Tempo',
+            'Nama Tabungan',
             style: TextStyleComp.mediumText(context),
           ),
           TextFormField(
-            controller: dateCtl,
-            autofocus: false,
-            keyboardType: TextInputType.text,
-            textCapitalization: TextCapitalization.characters,
-            enabled: true,
-            readOnly: true,
-            onTap: () async {
-              DateTime? date = DateTime(1900);
-              FocusScope.of(context).requestFocus(FocusNode());
-
-              date = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(2020),
-                lastDate: DateTime.now(),
-              );
-
-              selectedDate = DateFormat('yyyy-MM-dd').format(date!);
-              dateCtl.text =
-                  DateFormat('EEEE, dd MMMM yyyy', 'ID').format(date);
-            },
-            decoration: InputDecoration(
-              suffixIcon: Icon(
-                FontAwesomeIcons.calendarDay,
-                size: deviceWidth / 20,
-              ),
-              filled: true,
-              fillColor: Colors.grey.shade200,
-              hintText: 'Pilih tanggal jatuh tempo tagihan',
-              hintStyle: TextStyleComp.mediumText(context),
-              enabledBorder: OutlineInputBorder(
-                borderRadius:
-                    BorderRadius.all(Radius.circular(deviceWidth / 50)),
-                borderSide: const BorderSide(color: Colors.white, width: 1.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius:
-                    BorderRadius.all(Radius.circular(deviceWidth / 50)),
-                borderSide: const BorderSide(color: Colors.white, width: 1.0),
-              ),
-            ),
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Harus diisi';
-              }
-              return null;
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget nameBillTextFormField(deviceWidth) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: deviceWidth / 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Nama Tagihan',
-            style: TextStyleComp.mediumText(context),
-          ),
-          TextFormField(
-            controller: nameCtl,
+            controller: titleCtl,
             autofocus: false,
             keyboardType: TextInputType.text,
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.grey.shade200,
-              hintText: 'Masukkan nama tagihan',
+              hintText: 'Masukkan nama tabungan',
               hintStyle: TextStyleComp.mediumText(context),
               enabledBorder: OutlineInputBorder(
                 borderRadius:
@@ -181,25 +116,25 @@ class _AddBillPageState extends State<AddBillPage> {
     );
   }
 
-  Widget amountBillTextFormField(deviceWidth) {
+  Widget goalSavingTextFormField(deviceWidth) {
     return Padding(
       padding: EdgeInsets.only(bottom: deviceWidth / 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Nominal',
+            'Nominal Tujuan',
             style: TextStyleComp.mediumText(context),
           ),
           TextFormField(
-            controller: amountCtl,
+            controller: goalCtl,
             autofocus: false,
             keyboardType: TextInputType.number,
-            inputFormatters: [amountFormatter],
+            inputFormatters: [goalFormatter],
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.grey.shade200,
-              hintText: 'Masukkan nominal tagihan',
+              hintText: 'Masukkan nominal tujuan tabungan',
               hintStyle: TextStyleComp.mediumText(context),
               enabledBorder: OutlineInputBorder(
                 borderRadius:
@@ -224,7 +159,7 @@ class _AddBillPageState extends State<AddBillPage> {
     );
   }
 
-  Widget descBillTextFormField(deviceWidth) {
+  Widget descSavingTextFormField(deviceWidth) {
     return Padding(
       padding: EdgeInsets.only(bottom: deviceWidth / 20),
       child: Column(
@@ -271,19 +206,16 @@ class _AddBillPageState extends State<AddBillPage> {
   Widget sendButton(deviceWidth) {
     return ElevatedButton(
         onPressed: () async {
-          if (addBillFormKey.currentState!.validate()) {
-            GlobalModal.loadingModal(deviceWidth, context);
-            BillRepository.addData(
-              context,
-              userId,
-              selectedDate,
-              nameCtl.text,
-              amountFormatter.getUnformattedValue().toString(),
-              descCtl.text,
-            );
-          } else {
-            GlobalSnackBar.show(context, 'Ada form yang belum diisi!');
-          }
+          GlobalModal.loadingModal(deviceWidth, context);
+          SavingRepository.updateData(
+            context,
+            widget.id,
+            titleCtl.text,
+            goalFormatter.getUnformattedValue() == 0
+                ? widget.goalAmount
+                : goalFormatter.getUnformattedValue().toString(),
+            descCtl.text,
+          );
         },
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: deviceWidth / 50),
@@ -292,13 +224,5 @@ class _AddBillPageState extends State<AddBillPage> {
             style: TextStyleComp.mediumBoldText(context),
           ),
         ));
-  }
-
-  getUserId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    setState(() {
-      userId = prefs.getString('id')!;
-    });
   }
 }

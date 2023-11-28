@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:kantongku/component/snackbar.dart';
 import 'package:kantongku/model/user_model.dart';
+import 'package:kantongku/ui/login/login_page.dart';
 import 'package:kantongku/ui/navbar/navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -101,5 +102,13 @@ class UserRepository {
       GlobalSnackBar.show(context, jsonResponse.toString());
     }
     return null;
+  }
+
+  static Future logOut(context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+        (Route<dynamic> route) => false);
   }
 }

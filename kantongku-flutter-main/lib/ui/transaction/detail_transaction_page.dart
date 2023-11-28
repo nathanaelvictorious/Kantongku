@@ -1,38 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:kantongku/component/modal.dart';
 import 'package:kantongku/component/text_style.dart';
-import 'package:kantongku/model/transaction_model.dart';
-import 'package:kantongku/repository/budget_repository.dart';
-import 'package:kantongku/ui/budget/update_budget_page.dart';
-import 'package:kantongku/ui/transaction/detail_transaction_page.dart';
+import 'package:kantongku/repository/transaction_repository.dart';
+import 'package:kantongku/ui/transaction/update_transaction_page.dart';
 
-class DetailBudgetPage extends StatefulWidget {
+class DetailTransactionPage extends StatefulWidget {
   final String id;
+  final String? savingId;
+  final String? budgetId;
   final String category;
-  final String title;
-  final int spendTotal;
-  final int limit;
-  final String date;
+  final int amount;
+  final String dateTime;
   final String description;
 
-  const DetailBudgetPage({
-    required this.id,
-    required this.category,
-    required this.title,
-    required this.spendTotal,
-    required this.limit,
-    required this.date,
-    required this.description,
+  const DetailTransactionPage({
     super.key,
+    required this.id,
+    required this.savingId,
+    required this.budgetId,
+    required this.category,
+    required this.amount,
+    required this.dateTime,
+    required this.description,
   });
 
   @override
-  State<DetailBudgetPage> createState() => _DetailBudgetPageState();
+  State<DetailTransactionPage> createState() => _DetailTransactionPageState();
 }
 
-class _DetailBudgetPageState extends State<DetailBudgetPage> {
+class _DetailTransactionPageState extends State<DetailTransactionPage> {
   @override
   Widget build(BuildContext context) {
     var deviceWidth = MediaQuery.of(context).size.width;
@@ -45,27 +42,20 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'Detail Anggaran',
+          'Detail Transaksi',
           style: TextStyleComp.mediumBoldPrimaryColorText(context),
         ),
       ),
       body: ListView(
         children: [
-          detailBudgetWidgets(deviceWidth),
+          detailTransactWidgets(deviceWidth),
           buttonWidgets(deviceWidth),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: deviceWidth / 20),
-            child: Divider(
-              color: Colors.grey.shade700,
-            ),
-          ),
-          transactionPageWidgets(deviceWidth),
         ],
       ),
     );
   }
 
-  Widget detailBudgetWidgets(deviceWidth) {
+  Widget detailTransactWidgets(deviceWidth) {
     return Padding(
       padding: EdgeInsets.all(deviceWidth / 20),
       child: IntrinsicHeight(
@@ -101,12 +91,12 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Anggaran:',
+                              'Waktu Transaksi:',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyleComp.mediumBoldText(context),
                             ),
                             Text(
-                              widget.title,
+                              widget.dateTime,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyleComp.mediumText(context),
                             ),
@@ -122,15 +112,29 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Tanggal:',
+                              'Kategori:',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyleComp.mediumBoldText(context),
                             ),
-                            Text(
-                              DateFormat('dd MMMM yyyy', 'ID').format(
-                                  DateFormat('yyyy-MM-dd').parse(widget.date)),
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyleComp.mediumText(context),
+                            Row(
+                              children: [
+                                Text(
+                                  widget.category,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyleComp.mediumText(context),
+                                ),
+                                (widget.category == 'Pengeluaran' ||
+                                            widget.category == 'Pendapatan' ||
+                                            widget.category == 'Tabungan') &&
+                                        widget.budgetId == null
+                                    ? const SizedBox()
+                                    : Text(
+                                        ' Anggaran',
+                                        overflow: TextOverflow.ellipsis,
+                                        style:
+                                            TextStyleComp.mediumText(context),
+                                      ),
+                              ],
                             ),
                           ],
                         ),
@@ -140,34 +144,22 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
                       ),
                       SizedBox(
                         width: deviceWidth / 1.3,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Anggaran Terpakai:',
+                              'Nominal:',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyleComp.mediumBoldText(context),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Rp ${NumberFormat('#,##0', 'ID').format(widget.spendTotal)}/',
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyleComp.mediumText(context),
-                                    ),
-                                    Text(
-                                      'Rp ${NumberFormat('#,##0', 'ID').format(widget.limit)}',
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyleComp
-                                          .mediumBoldPrimaryColorText(context),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                            Text(
+                              widget.category == 'Pengeluaran'
+                                  ? '- Rp ${NumberFormat('#,##0', 'ID').format(widget.amount)}'
+                                  : 'Rp ${NumberFormat('#,##0', 'ID').format(widget.amount)}',
+                              overflow: TextOverflow.ellipsis,
+                              style: widget.category == 'Pengeluaran'
+                                  ? TextStyleComp.mediumRedText(context)
+                                  : TextStyleComp.mediumGreenText(context),
                             ),
                           ],
                         ),
@@ -240,12 +232,13 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
                           onPressed: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return UpdateBudgetPage(
-                                id: widget.id,
-                                title: widget.title,
-                                limit: widget.limit.toString(),
-                                description: widget.description,
-                              );
+                              return UpdateTransactionPage(
+                                  id: widget.id,
+                                  savingId: widget.savingId,
+                                  budgetId: widget.budgetId,
+                                  category: widget.category,
+                                  amount: widget.amount,
+                                  description: widget.description);
                             })).then((value) {
                               setState(() {});
                             });
@@ -280,153 +273,6 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
                               style: TextStyleComp.mediumBoldText(context),
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget transactionPageWidgets(deviceWidth) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: deviceWidth / 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-                deviceWidth / 20, deviceWidth / 50, deviceWidth / 20, 0),
-            child: Text(
-              'Riwayat transaksi',
-              style: TextStyleComp.mediumBoldPrimaryColorText(context),
-            ),
-          ),
-          SizedBox(
-            height: deviceWidth / 20,
-          ),
-          FutureBuilder(
-              future: BudgetRepository.getTransaction(widget.id),
-              builder: ((context, snapshot) {
-                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  List<Transaction> transBudgetItems = snapshot.data!;
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: deviceWidth / 5),
-                    child: ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: transBudgetItems.length,
-                        itemBuilder: (context, index) {
-                          return card(
-                              context, deviceWidth, index, transBudgetItems);
-                        }),
-                  );
-                } else if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return Center(
-                    child: SpinKitFadingCube(
-                      color: Theme.of(context).primaryColor,
-                      size: deviceWidth / 15,
-                    ),
-                  );
-                } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-                  return Center(
-                    child: Text(
-                      'Belum ada transaksi anggaran',
-                      style: TextStyleComp.smallBoldText(context),
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      snapshot.error.toString(),
-                      style: TextStyleComp.smallBoldText(context),
-                    ),
-                  );
-                } else {
-                  return Center(
-                    child: Text(
-                      'Belum ada transaksi anggaran',
-                      style: TextStyleComp.smallBoldText(context),
-                    ),
-                  );
-                }
-              })),
-        ],
-      ),
-    );
-  }
-
-  Widget card(context, deviceWidth, index, data) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        deviceWidth / 20,
-        0,
-        deviceWidth / 20,
-        deviceWidth / 20,
-      ),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return DetailTransactionPage(
-                id: data[index].id,
-                savingId: data[index].savingId,
-                budgetId: data[index].budgetId,
-                category: data[index].category,
-                amount: data[index].amount,
-                dateTime: data[index].dateTime,
-                description: data[index].description);
-          })).then((value) {
-            setState(() {});
-          });
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(
-              Radius.circular(deviceWidth / 40),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.4),
-                spreadRadius: 0,
-                blurRadius: 0,
-                offset: const Offset(3, 5),
-              ),
-            ],
-            border: Border.all(color: Theme.of(context).primaryColor),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: EdgeInsets.all(deviceWidth / 40),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: deviceWidth / 40),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: deviceWidth / 1.3,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              data[index].dateTime,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyleComp.smallItalicText(context),
-                            ),
-                            Text(
-                                'Rp ${NumberFormat('#,##0', 'ID').format(data[index].amount)}',
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyleComp.mediumPrimaryColorText(
-                                    context)),
-                          ],
                         ),
                       ),
                     ],
@@ -515,7 +361,8 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
                             ),
                             onPressed: () {
                               GlobalModal.loadingModal(deviceWidth, context);
-                              BudgetRepository.deleteData(context, widget.id);
+                              TransactionRepository.deleteData(
+                                  context, widget.id);
                             },
                             child: Padding(
                               padding: EdgeInsets.symmetric(

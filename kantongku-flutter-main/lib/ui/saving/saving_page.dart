@@ -2,30 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:kantongku/component/color.dart';
 import 'package:kantongku/component/text_style.dart';
-import 'package:kantongku/model/budget_model.dart';
-import 'package:kantongku/repository/budget_repository.dart';
-import 'package:kantongku/ui/budget/add_budget_page.dart';
-import 'package:kantongku/ui/budget/detail_budget_page.dart';
-import 'package:month_year_picker/month_year_picker.dart';
+import 'package:kantongku/model/saving_model.dart';
+import 'package:kantongku/repository/saving_repository.dart';
+import 'package:kantongku/ui/saving/add_saving_page.dart';
+import 'package:kantongku/ui/saving/detail_saving_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class BudgetPage extends StatefulWidget {
-  const BudgetPage({super.key});
+class SavingPage extends StatefulWidget {
+  const SavingPage({super.key});
 
   @override
-  State<BudgetPage> createState() => _BudgetPageState();
+  State<SavingPage> createState() => _SavingPageState();
 }
 
-class _BudgetPageState extends State<BudgetPage> {
-  String userId = '', filterDateText = '', filterDateTextBahasa = '';
+class _SavingPageState extends State<SavingPage> {
+  String userId = '';
 
   @override
   void initState() {
     getUserId();
-    filterDateText = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    filterDateTextBahasa = DateFormat('MMMM yyyy', 'ID').format(DateTime.now());
     super.initState();
   }
 
@@ -36,7 +32,7 @@ class _BudgetPageState extends State<BudgetPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const AddBudgetPage();
+            return const AddSavingPage();
           })).then((value) {
             setState(() {});
           });
@@ -51,8 +47,7 @@ class _BudgetPageState extends State<BudgetPage> {
         child: ListView(
           children: [
             titlePage(deviceWidth),
-            monthPickerWidget(deviceWidth),
-            budgetPageWidgets(deviceWidth),
+            savingPageWidgets(deviceWidth),
           ],
         ),
       ),
@@ -63,78 +58,28 @@ class _BudgetPageState extends State<BudgetPage> {
     return Padding(
       padding: EdgeInsets.all(deviceWidth / 20),
       child: Text(
-        'Manajemen Anggaran',
+        'Penyimpanan Tabungan',
         style: TextStyleComp.bigBoldPrimaryColorText(context),
       ),
     );
   }
 
-  Widget monthPickerWidget(deviceWidth) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: deviceWidth / 20),
-      child: GestureDetector(
-        onTap: () async {
-          String? locale = 'id';
-          final localeObj = Locale(locale);
-          DateTime? selected = await showMonthYearPicker(
-            context: context,
-            initialDate: DateTime(DateTime.now().year, DateTime.now().month),
-            firstDate: DateTime(2001),
-            lastDate: DateTime(DateTime.now().year, DateTime.now().month),
-            locale: localeObj,
-          );
-
-          if (selected != null) {
-            setState(() {
-              filterDateText = DateFormat('yyyy-MM-dd').format(selected);
-              filterDateTextBahasa =
-                  DateFormat('MMMM yyyy', 'id').format(selected);
-            });
-            setState(() {});
-          }
-
-          setState(() {});
-        },
-        child: Container(
-          padding: EdgeInsets.all(deviceWidth / 20),
-          decoration: BoxDecoration(
-              color: GlobalColors.lighterLightBlue,
-              borderRadius:
-                  BorderRadius.all(Radius.circular(deviceWidth / 50))),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                filterDateTextBahasa,
-                style: TextStyleComp.mediumBoldText(context),
-              ),
-              Icon(
-                FontAwesomeIcons.circleChevronDown,
-                size: deviceWidth / 20,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget budgetPageWidgets(deviceWidth) {
+  Widget savingPageWidgets(deviceWidth) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: deviceWidth / 20),
       child: FutureBuilder(
-          future: BudgetRepository.getData(userId, filterDateText),
+          future: SavingRepository.getData(userId),
           builder: ((context, snapshot) {
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-              List<Budget> budgetItems = snapshot.data!;
+              List<Saving> savingItems = snapshot.data!;
               return Padding(
                 padding: EdgeInsets.only(bottom: deviceWidth / 5),
                 child: ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: budgetItems.length,
+                    itemCount: savingItems.length,
                     itemBuilder: (context, index) {
-                      return card(context, deviceWidth, index, budgetItems);
+                      return card(context, deviceWidth, index, savingItems);
                     }),
               );
             } else if (snapshot.connectionState == ConnectionState.waiting) {
@@ -147,7 +92,7 @@ class _BudgetPageState extends State<BudgetPage> {
             } else if (snapshot.hasData && snapshot.data!.isEmpty) {
               return Center(
                 child: Text(
-                  'Belum ada anggaran',
+                  'Belum ada tabungan',
                   style: TextStyleComp.smallBoldText(context),
                 ),
               );
@@ -161,7 +106,7 @@ class _BudgetPageState extends State<BudgetPage> {
             } else {
               return Center(
                 child: Text(
-                  'Belum ada anggaran',
+                  'Belum ada tabungan',
                   style: TextStyleComp.smallBoldText(context),
                 ),
               );
@@ -181,14 +126,13 @@ class _BudgetPageState extends State<BudgetPage> {
       child: InkWell(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return DetailBudgetPage(
+            return DetailSavingPage(
               id: data[index].id,
               title: data[index].title,
-              category: data[index].category,
-              date: data[index].date,
               description: data[index].description,
-              spendTotal: data[index].spendTotal,
-              limit: data[index].limit,
+              currentBalance: data[index].currentBalance,
+              goalAmount: data[index].goalAmount,
+              isAchieved: data[index].isAchieved,
             );
           })).then((value) {
             setState(() {});
@@ -220,15 +164,6 @@ class _BudgetPageState extends State<BudgetPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        DateFormat('EEEE, dd MMMM yyyy', 'ID').format(
-                            DateFormat('yyyy-MM-dd').parse(data[index].date)),
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyleComp.smallBoldPrimaryColorText(context),
-                      ),
-                      SizedBox(
-                        height: deviceWidth / 80,
-                      ),
                       SizedBox(
                         width: deviceWidth / 1.3,
                         child: Text(
@@ -246,18 +181,37 @@ class _BudgetPageState extends State<BudgetPage> {
                             Row(
                               children: [
                                 Text(
-                                  'Rp ${NumberFormat('#,##0', 'ID').format(data[index].spendTotal)}/',
+                                  'Rp ${NumberFormat('#,##0', 'ID').format(data[index].currentBalance)}/',
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyleComp.mediumBoldText(context),
                                 ),
                                 Text(
-                                  'Rp ${NumberFormat('#,##0', 'ID').format(data[index].limit)}',
+                                  'Rp ${NumberFormat('#,##0', 'ID').format(data[index].goalAmount)}',
                                   overflow: TextOverflow.ellipsis,
                                   style:
                                       TextStyleComp.mediumBoldPrimaryColorText(
                                           context),
                                 ),
                               ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: deviceWidth / 1.3,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(),
+                            Text(
+                              data[index].isAchieved
+                                  ? 'Sudah tercapai'
+                                  : 'Belum tercapai',
+                              overflow: TextOverflow.ellipsis,
+                              style: data[index].isAchieved
+                                  ? TextStyleComp.smallBoldPrimaryColorText(
+                                      context)
+                                  : TextStyleComp.smallBoldRedText(context),
                             ),
                           ],
                         ),

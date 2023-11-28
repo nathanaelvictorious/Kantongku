@@ -4,35 +4,33 @@ import 'package:intl/intl.dart';
 import 'package:kantongku/component/modal.dart';
 import 'package:kantongku/component/text_style.dart';
 import 'package:kantongku/model/transaction_model.dart';
-import 'package:kantongku/repository/budget_repository.dart';
-import 'package:kantongku/ui/budget/update_budget_page.dart';
+import 'package:kantongku/repository/saving_repository.dart';
+import 'package:kantongku/ui/saving/update_saving_page.dart';
 import 'package:kantongku/ui/transaction/detail_transaction_page.dart';
 
-class DetailBudgetPage extends StatefulWidget {
+class DetailSavingPage extends StatefulWidget {
   final String id;
-  final String category;
   final String title;
-  final int spendTotal;
-  final int limit;
-  final String date;
+  final int currentBalance;
+  final int goalAmount;
   final String description;
+  final bool isAchieved;
 
-  const DetailBudgetPage({
+  const DetailSavingPage({
     required this.id,
-    required this.category,
     required this.title,
-    required this.spendTotal,
-    required this.limit,
-    required this.date,
+    required this.currentBalance,
+    required this.goalAmount,
     required this.description,
+    required this.isAchieved,
     super.key,
   });
 
   @override
-  State<DetailBudgetPage> createState() => _DetailBudgetPageState();
+  State<DetailSavingPage> createState() => _DetailSavingPageState();
 }
 
-class _DetailBudgetPageState extends State<DetailBudgetPage> {
+class _DetailSavingPageState extends State<DetailSavingPage> {
   @override
   Widget build(BuildContext context) {
     var deviceWidth = MediaQuery.of(context).size.width;
@@ -45,13 +43,13 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'Detail Anggaran',
+          'Detail Tabungan',
           style: TextStyleComp.mediumBoldPrimaryColorText(context),
         ),
       ),
       body: ListView(
         children: [
-          detailBudgetWidgets(deviceWidth),
+          detailSavingWidgets(deviceWidth),
           buttonWidgets(deviceWidth),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: deviceWidth / 20),
@@ -65,7 +63,7 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
     );
   }
 
-  Widget detailBudgetWidgets(deviceWidth) {
+  Widget detailSavingWidgets(deviceWidth) {
     return Padding(
       padding: EdgeInsets.all(deviceWidth / 20),
       child: IntrinsicHeight(
@@ -101,7 +99,30 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Anggaran:',
+                              'Status:',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyleComp.mediumBoldText(context),
+                            ),
+                            Text(
+                              widget.isAchieved
+                                  ? 'Sudah Tercapai'
+                                  : 'Belum Tercapai',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyleComp.mediumText(context),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: deviceWidth / 80,
+                      ),
+                      SizedBox(
+                        width: deviceWidth / 1.3,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Tabungan:',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyleComp.mediumBoldText(context),
                             ),
@@ -118,33 +139,11 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
                       ),
                       SizedBox(
                         width: deviceWidth / 1.3,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Tanggal:',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyleComp.mediumBoldText(context),
-                            ),
-                            Text(
-                              DateFormat('dd MMMM yyyy', 'ID').format(
-                                  DateFormat('yyyy-MM-dd').parse(widget.date)),
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyleComp.mediumText(context),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: deviceWidth / 80,
-                      ),
-                      SizedBox(
-                        width: deviceWidth / 1.3,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Anggaran Terpakai:',
+                              'Progress Tabungan:',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyleComp.mediumBoldText(context),
                             ),
@@ -155,12 +154,12 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
                                 Row(
                                   children: [
                                     Text(
-                                      'Rp ${NumberFormat('#,##0', 'ID').format(widget.spendTotal)}/',
+                                      'Rp ${NumberFormat('#,##0', 'ID').format(widget.currentBalance)}/',
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyleComp.mediumText(context),
                                     ),
                                     Text(
-                                      'Rp ${NumberFormat('#,##0', 'ID').format(widget.limit)}',
+                                      'Rp ${NumberFormat('#,##0', 'ID').format(widget.goalAmount)}',
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyleComp
                                           .mediumBoldPrimaryColorText(context),
@@ -240,10 +239,10 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
                           onPressed: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return UpdateBudgetPage(
+                              return UpdateSavingPage(
                                 id: widget.id,
                                 title: widget.title,
-                                limit: widget.limit.toString(),
+                                goalAmount: widget.goalAmount.toString(),
                                 description: widget.description,
                               );
                             })).then((value) {
@@ -311,19 +310,19 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
             height: deviceWidth / 20,
           ),
           FutureBuilder(
-              future: BudgetRepository.getTransaction(widget.id),
+              future: SavingRepository.getTransaction(widget.id),
               builder: ((context, snapshot) {
                 if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  List<Transaction> transBudgetItems = snapshot.data!;
+                  List<Transaction> transSavingItems = snapshot.data!;
                   return Padding(
                     padding: EdgeInsets.only(bottom: deviceWidth / 5),
                     child: ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: transBudgetItems.length,
+                        itemCount: transSavingItems.length,
                         itemBuilder: (context, index) {
                           return card(
-                              context, deviceWidth, index, transBudgetItems);
+                              context, deviceWidth, index, transSavingItems);
                         }),
                   );
                 } else if (snapshot.connectionState ==
@@ -337,7 +336,7 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
                 } else if (snapshot.hasData && snapshot.data!.isEmpty) {
                   return Center(
                     child: Text(
-                      'Belum ada transaksi anggaran',
+                      'Belum ada transaksi tabungan',
                       style: TextStyleComp.smallBoldText(context),
                     ),
                   );
@@ -351,7 +350,7 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
                 } else {
                   return Center(
                     child: Text(
-                      'Belum ada transaksi anggaran',
+                      'Belum ada transaksi tabungan',
                       style: TextStyleComp.smallBoldText(context),
                     ),
                   );
@@ -515,7 +514,7 @@ class _DetailBudgetPageState extends State<DetailBudgetPage> {
                             ),
                             onPressed: () {
                               GlobalModal.loadingModal(deviceWidth, context);
-                              BudgetRepository.deleteData(context, widget.id);
+                              SavingRepository.deleteData(context, widget.id);
                             },
                             child: Padding(
                               padding: EdgeInsets.symmetric(

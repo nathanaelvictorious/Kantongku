@@ -154,12 +154,12 @@ class _DetailBillPageState extends State<DetailBillPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Sudah Dibayar:',
+                              'Status:',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyleComp.mediumBoldText(context),
                             ),
                             Text(
-                              widget.isPaid ? 'Sudah' : 'Belum',
+                              widget.isPaid ? 'Sudah dibayar' : 'Belum dibayar',
                               style: TextStyleComp.mediumText(context),
                             ),
                           ],

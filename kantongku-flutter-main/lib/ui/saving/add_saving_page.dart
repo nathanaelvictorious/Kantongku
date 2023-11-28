@@ -1,34 +1,30 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:kantongku/component/modal.dart';
 import 'package:kantongku/component/snackbar.dart';
 import 'package:kantongku/component/text_style.dart';
-import 'package:kantongku/repository/bill_repository.dart';
+import 'package:kantongku/repository/saving_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AddBillPage extends StatefulWidget {
-  const AddBillPage({super.key});
+class AddSavingPage extends StatefulWidget {
+  const AddSavingPage({super.key});
 
   @override
-  State<AddBillPage> createState() => _AddBillPageState();
+  State<AddSavingPage> createState() => _AddSavingPageState();
 }
 
-class _AddBillPageState extends State<AddBillPage> {
-  String selectedDate = '';
+class _AddSavingPageState extends State<AddSavingPage> {
   String userId = '';
-  TextEditingController dateCtl = TextEditingController();
-  TextEditingController nameCtl = TextEditingController();
-  TextEditingController amountCtl = TextEditingController();
+  TextEditingController titleCtl = TextEditingController();
+  TextEditingController goalCtl = TextEditingController();
   TextEditingController descCtl = TextEditingController();
-  final CurrencyTextInputFormatter amountFormatter = CurrencyTextInputFormatter(
+  final CurrencyTextInputFormatter goalFormatter = CurrencyTextInputFormatter(
     locale: 'id',
     decimalDigits: 0,
     symbol: 'Rp ',
   );
 
-  final addBillFormKey = GlobalKey<FormState>();
+  final addSavingFormKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -48,115 +44,50 @@ class _AddBillPageState extends State<AddBillPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          'Tambah Tagihan',
+          'Tambah Tabungan',
           style: TextStyleComp.mediumBoldPrimaryColorText(context),
         ),
       ),
-      body: addBillForm(deviceWidth),
-    );
-  }
-
-  Widget addBillForm(deviceWidth) {
-    return Padding(
-      padding: EdgeInsets.all(deviceWidth / 20),
-      child: Form(
-        key: addBillFormKey,
-        child: ListView(
-          children: [
-            dateBilllTextFormField(deviceWidth),
-            nameBillTextFormField(deviceWidth),
-            amountBillTextFormField(deviceWidth),
-            descBillTextFormField(deviceWidth),
-            sendButton(deviceWidth),
-          ],
-        ),
+      body: Padding(
+        padding: EdgeInsets.all(deviceWidth / 20),
+        child: addSavingForm(deviceWidth),
       ),
     );
   }
 
-  Widget dateBilllTextFormField(deviceWidth) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: deviceWidth / 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget addSavingForm(deviceWidth) {
+    return Form(
+      key: addSavingFormKey,
+      child: ListView(
         children: [
-          Text(
-            'Tanggal Jatuh Tempo',
-            style: TextStyleComp.mediumText(context),
-          ),
-          TextFormField(
-            controller: dateCtl,
-            autofocus: false,
-            keyboardType: TextInputType.text,
-            textCapitalization: TextCapitalization.characters,
-            enabled: true,
-            readOnly: true,
-            onTap: () async {
-              DateTime? date = DateTime(1900);
-              FocusScope.of(context).requestFocus(FocusNode());
-
-              date = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(2020),
-                lastDate: DateTime.now(),
-              );
-
-              selectedDate = DateFormat('yyyy-MM-dd').format(date!);
-              dateCtl.text =
-                  DateFormat('EEEE, dd MMMM yyyy', 'ID').format(date);
-            },
-            decoration: InputDecoration(
-              suffixIcon: Icon(
-                FontAwesomeIcons.calendarDay,
-                size: deviceWidth / 20,
-              ),
-              filled: true,
-              fillColor: Colors.grey.shade200,
-              hintText: 'Pilih tanggal jatuh tempo tagihan',
-              hintStyle: TextStyleComp.mediumText(context),
-              enabledBorder: OutlineInputBorder(
-                borderRadius:
-                    BorderRadius.all(Radius.circular(deviceWidth / 50)),
-                borderSide: const BorderSide(color: Colors.white, width: 1.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius:
-                    BorderRadius.all(Radius.circular(deviceWidth / 50)),
-                borderSide: const BorderSide(color: Colors.white, width: 1.0),
-              ),
-            ),
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Harus diisi';
-              }
-              return null;
-            },
-          ),
+          nameSavingTextFormField(deviceWidth),
+          goalSavingTextFormField(deviceWidth),
+          descSavingTextFormField(deviceWidth),
+          sendButton(deviceWidth),
         ],
       ),
     );
   }
 
-  Widget nameBillTextFormField(deviceWidth) {
+  Widget nameSavingTextFormField(deviceWidth) {
     return Padding(
       padding: EdgeInsets.only(bottom: deviceWidth / 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Nama Tagihan',
+            'Nama Tabungan',
             style: TextStyleComp.mediumText(context),
           ),
           TextFormField(
-            controller: nameCtl,
+            controller: titleCtl,
             autofocus: false,
             keyboardType: TextInputType.text,
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.grey.shade200,
-              hintText: 'Masukkan nama tagihan',
+              hintText: 'Masukkan nama tabungan',
               hintStyle: TextStyleComp.mediumText(context),
               enabledBorder: OutlineInputBorder(
                 borderRadius:
@@ -181,25 +112,25 @@ class _AddBillPageState extends State<AddBillPage> {
     );
   }
 
-  Widget amountBillTextFormField(deviceWidth) {
+  Widget goalSavingTextFormField(deviceWidth) {
     return Padding(
       padding: EdgeInsets.only(bottom: deviceWidth / 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Nominal',
+            'Nominal Tujuan',
             style: TextStyleComp.mediumText(context),
           ),
           TextFormField(
-            controller: amountCtl,
+            controller: goalCtl,
             autofocus: false,
             keyboardType: TextInputType.number,
-            inputFormatters: [amountFormatter],
+            inputFormatters: [goalFormatter],
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.grey.shade200,
-              hintText: 'Masukkan nominal tagihan',
+              hintText: 'Masukkan nominal tujuan tabungan',
               hintStyle: TextStyleComp.mediumText(context),
               enabledBorder: OutlineInputBorder(
                 borderRadius:
@@ -224,7 +155,7 @@ class _AddBillPageState extends State<AddBillPage> {
     );
   }
 
-  Widget descBillTextFormField(deviceWidth) {
+  Widget descSavingTextFormField(deviceWidth) {
     return Padding(
       padding: EdgeInsets.only(bottom: deviceWidth / 20),
       child: Column(
@@ -271,14 +202,13 @@ class _AddBillPageState extends State<AddBillPage> {
   Widget sendButton(deviceWidth) {
     return ElevatedButton(
         onPressed: () async {
-          if (addBillFormKey.currentState!.validate()) {
+          if (addSavingFormKey.currentState!.validate()) {
             GlobalModal.loadingModal(deviceWidth, context);
-            BillRepository.addData(
+            SavingRepository.addData(
               context,
               userId,
-              selectedDate,
-              nameCtl.text,
-              amountFormatter.getUnformattedValue().toString(),
+              titleCtl.text,
+              goalFormatter.getUnformattedValue().toString(),
               descCtl.text,
             );
           } else {

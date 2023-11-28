@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:kantongku/component/snackbar.dart';
-import 'package:kantongku/model/bill_model.dart';
+import 'package:kantongku/model/saving_model.dart';
+import 'package:kantongku/model/transaction_model.dart';
 
-class BillRepository {
+class SavingRepository {
   static String urlServer = 'http://192.168.1.8:8000/api';
 
-  static Future<List<Bill>> getData(userId) async {
-    Uri url = Uri.parse("$urlServer/bill-reminders/$userId");
+  static Future<List<Saving>> getData(userId) async {
+    Uri url = Uri.parse("$urlServer/savings/$userId");
 
     var response = await get(
       url,
@@ -19,21 +20,36 @@ class BillRepository {
 
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body) as List;
-      return jsonResponse.map((e) => Bill.createFromJson(e)).toList();
+      return jsonResponse.map((e) => Saving.createFromJson(e)).toList();
     }
     return [];
   }
 
-  static Future addData(
-      context, userId, dueDate, name, amount, description) async {
+  static Future<List<Transaction>> getTransaction(savingId) async {
+    Uri url = Uri.parse("$urlServer/transactions/saving/$savingId");
+
+    var response = await get(
+      url,
+      headers: {
+        'Accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body) as List;
+      return jsonResponse.map((e) => Transaction.createFromJson(e)).toList();
+    }
+    return [];
+  }
+
+  static Future addData(context, userId, title, goalAmount, description) async {
     try {
       Response response = await post(
-        Uri.parse("$urlServer/bill-reminders"),
+        Uri.parse("$urlServer/savings"),
         body: {
           "user_id": userId,
-          "name": name,
-          "amount": amount,
-          "due_date": dueDate,
+          "title": title,
+          "goal_amount": goalAmount,
           "description": description,
         },
       );
@@ -41,10 +57,10 @@ class BillRepository {
         Navigator.pop(context);
         Navigator.pop(context);
 
-        GlobalSnackBar.show(context, 'Tagihan berhasil ditambahkan.');
+        GlobalSnackBar.show(context, 'Tabungan berhasil ditambahkan.');
       } else {
         Navigator.pop(context);
-        GlobalSnackBar.show(context, 'Tagihan gagal ditambahkan');
+        GlobalSnackBar.show(context, 'Tabungan gagal ditambahkan');
       }
     } catch (e) {
       Navigator.pop(context);
@@ -52,17 +68,15 @@ class BillRepository {
     }
   }
 
-  static Future updateData(context, billReminderId, dueDate, name, amount,
-      description, isPaid) async {
+  static Future updateData(
+      context, savingId, title, goalAmount, description) async {
     try {
       Response response = await put(
-        Uri.parse("$urlServer/bill-reminders/$billReminderId"),
+        Uri.parse("$urlServer/savings/$savingId"),
         body: {
-          "name": name,
-          "amount": amount,
-          "due_date": dueDate,
+          "title": title,
+          "goal_amount": goalAmount,
           "description": description,
-          "is_paid_off": isPaid,
         },
       );
 
@@ -71,10 +85,10 @@ class BillRepository {
         Navigator.pop(context);
         Navigator.pop(context);
 
-        GlobalSnackBar.show(context, 'Tagihan berhasil diubah.');
+        GlobalSnackBar.show(context, 'Tabungan berhasil diubah.');
       } else {
         Navigator.pop(context);
-        GlobalSnackBar.show(context, 'Tagihan gagal diubah');
+        GlobalSnackBar.show(context, 'Tabungan gagal diubah');
       }
     } catch (e) {
       Navigator.pop(context);
@@ -82,21 +96,21 @@ class BillRepository {
     }
   }
 
-  static Future deleteData(context, billReminderId) async {
+  static Future deleteData(context, savingId) async {
     try {
       Response response = await delete(
-        Uri.parse("$urlServer/bill-reminders/$billReminderId"),
+        Uri.parse("$urlServer/savings/$savingId"),
       );
       if (response.statusCode == 200) {
         Navigator.pop(context);
         Navigator.pop(context);
         Navigator.pop(context);
 
-        GlobalSnackBar.show(context, 'Tagihan berhasil dihapus.');
+        GlobalSnackBar.show(context, 'Tabungan berhasil dihapus.');
       } else {
         Navigator.pop(context);
         Navigator.pop(context);
-        GlobalSnackBar.show(context, 'Tagihan gagal dihapus.');
+        GlobalSnackBar.show(context, 'Tabungan gagal dihapus.');
       }
     } catch (e) {
       Navigator.pop(context);

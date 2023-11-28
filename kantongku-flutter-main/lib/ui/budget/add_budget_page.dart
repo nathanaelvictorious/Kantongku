@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:kantongku/component/modal.dart';
+import 'package:kantongku/component/snackbar.dart';
 import 'package:kantongku/component/text_style.dart';
 import 'package:kantongku/repository/budget_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,6 +28,8 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
     decimalDigits: 0,
     symbol: 'Rp ',
   );
+
+  final addBudgetFormKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -58,15 +61,18 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
   }
 
   Widget addBugdetForm(deviceWidth) {
-    return ListView(
-      children: [
-        categoryDropdown(deviceWidth),
-        dateBudgetTextFormField(deviceWidth),
-        nameBudgetTextFormField(deviceWidth),
-        limitBudgetTextFormField(deviceWidth),
-        descBudgetTextFormField(deviceWidth),
-        sendButton(deviceWidth),
-      ],
+    return Form(
+      key: addBudgetFormKey,
+      child: ListView(
+        children: [
+          categoryDropdown(deviceWidth),
+          dateBudgetTextFormField(deviceWidth),
+          nameBudgetTextFormField(deviceWidth),
+          limitBudgetTextFormField(deviceWidth),
+          descBudgetTextFormField(deviceWidth),
+          sendButton(deviceWidth),
+        ],
+      ),
     );
   }
 
@@ -322,16 +328,20 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
   Widget sendButton(deviceWidth) {
     return ElevatedButton(
         onPressed: () async {
-          GlobalModal.loadingModal(deviceWidth, context);
-          BudgetRepository.addData(
-            context,
-            userId,
-            titleCtl.text,
-            selectedCategory,
-            limitFormatter.getUnformattedValue().toString(),
-            descCtl.text,
-            selectedDate,
-          );
+          if (addBudgetFormKey.currentState!.validate()) {
+            GlobalModal.loadingModal(deviceWidth, context);
+            BudgetRepository.addData(
+              context,
+              userId,
+              titleCtl.text,
+              selectedCategory,
+              limitFormatter.getUnformattedValue().toString(),
+              descCtl.text,
+              selectedDate,
+            );
+          } else {
+            GlobalSnackBar.show(context, 'Ada form yang belum diisi!');
+          }
         },
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: deviceWidth / 50),

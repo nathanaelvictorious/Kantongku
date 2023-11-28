@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:kantongku/component/snackbar.dart';
 import 'package:kantongku/model/budget_model.dart';
+import 'package:kantongku/model/transaction_model.dart';
 
 class BudgetRepository {
   static String urlServer = 'http://192.168.1.8:8000/api';
@@ -20,6 +21,23 @@ class BudgetRepository {
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body) as List;
       return jsonResponse.map((e) => Budget.createFromJson(e)).toList();
+    }
+    return [];
+  }
+
+  static Future<List<Transaction>> getTransaction(budgetId) async {
+    Uri url = Uri.parse("$urlServer/transactions/budget/$budgetId");
+
+    var response = await get(
+      url,
+      headers: {
+        'Accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body) as List;
+      return jsonResponse.map((e) => Transaction.createFromJson(e)).toList();
     }
     return [];
   }
@@ -84,9 +102,6 @@ class BudgetRepository {
     try {
       Response response = await delete(
         Uri.parse("$urlServer/budgets/$budgetId"),
-        body: {
-          "id": budgetId,
-        },
       );
       if (response.statusCode == 200) {
         Navigator.pop(context);

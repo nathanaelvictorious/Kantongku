@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:kantongku/component/text_style.dart';
@@ -82,11 +83,16 @@ class _BillPageState extends State<BillPage> {
                     }),
               );
             } else if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                child: SpinKitFadingCube(
+                  color: Theme.of(context).primaryColor,
+                  size: deviceWidth / 15,
+                ),
+              );
             } else if (snapshot.hasData && snapshot.data!.isEmpty) {
               return Center(
                 child: Text(
-                  'Tidak ada data',
+                  'Belum ada tagihan',
                   style: TextStyleComp.smallBoldText(context),
                 ),
               );
@@ -100,7 +106,7 @@ class _BillPageState extends State<BillPage> {
             } else {
               return Center(
                 child: Text(
-                  'Tidak ada data',
+                  'Belum ada tagihan',
                   style: TextStyleComp.smallBoldText(context),
                 ),
               );
@@ -178,7 +184,15 @@ class _BillPageState extends State<BillPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(),
+                            Text(
+                              data[index].isPaid
+                                  ? 'Sudah dibayar'
+                                  : 'Belum dibayar',
+                              style: data[index].isPaid
+                                  ? TextStyleComp.smallBoldPrimaryColorText(
+                                      context)
+                                  : TextStyleComp.smallBoldRedText(context),
+                            ),
                             Text(
                               'Rp ${NumberFormat('#,##0', 'ID').format(data[index].amount)}',
                               overflow: TextOverflow.ellipsis,

@@ -39,7 +39,6 @@ class TextStyleComp {
   static bigText(context) {
     var kWidth = MediaQuery.of(context).size.width;
     return TextStyle(
-      fontWeight: FontWeight.bold,
       fontSize: kWidth / 20,
     );
   }
@@ -91,6 +90,14 @@ class TextStyleComp {
     var kWidth = MediaQuery.of(context).size.width;
     return TextStyle(
       fontWeight: FontWeight.bold,
+      fontSize: kWidth / 30,
+    );
+  }
+
+  static smallItalicText(context) {
+    var kWidth = MediaQuery.of(context).size.width;
+    return TextStyle(
+      fontStyle: FontStyle.italic,
       fontSize: kWidth / 30,
     );
   }
@@ -156,6 +163,15 @@ class TextStyleComp {
     return TextStyle(
       fontSize: kWidth / 25,
       color: Colors.red,
+    );
+  }
+
+  static mediumGreenText(context) {
+    var kWidth = MediaQuery.of(context).size.width;
+
+    return TextStyle(
+      fontSize: kWidth / 25,
+      color: const Color.fromARGB(255, 51, 116, 53),
     );
   }
 
