@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kantongku/component/text_style.dart';
 import 'package:kantongku/repository/user_repository.dart';
 import 'package:kantongku/ui/budget/budget_page.dart';
+import 'package:kantongku/ui/home/home_page.dart';
 import 'package:kantongku/ui/saving/saving_page.dart';
 import 'package:kantongku/ui/transaction/transaction_page.dart';
 
@@ -17,7 +18,7 @@ class Navbar extends StatefulWidget {
 class _NavbarState extends State<Navbar> {
   int? selectedPage;
   List<Widget> pageList = [
-    const SizedBox(),
+    const HomePage(),
     const TransactionPage(),
     const BudgetPage(),
     const SavingPage(),

@@ -24,6 +24,23 @@ class TransactionRepository {
     return [];
   }
 
+  static Future<List<Transaction>> getPeriodicData(userId, periode) async {
+    Uri url = Uri.parse("$urlServer/transactions/user/$userId?date=$periode");
+
+    var response = await get(
+      url,
+      headers: {
+        'Accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body) as List;
+      return jsonResponse.map((e) => Transaction.createFromJson(e)).toList();
+    }
+    return [];
+  }
+
   static Future addDataWithoutBudgetSaving(
       context, userId, category, amount, dateTime, description) async {
     try {

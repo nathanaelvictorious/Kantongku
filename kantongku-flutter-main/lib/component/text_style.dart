@@ -36,6 +36,19 @@ class TextStyleComp {
     );
   }
 
+  static bigGreenText(context) {
+    var kWidth = MediaQuery.of(context).size.width;
+    return TextStyle(
+      fontSize: kWidth / 20,
+      color: const Color.fromARGB(255, 51, 116, 53),
+    );
+  }
+
+  static bigRedText(context) {
+    var kWidth = MediaQuery.of(context).size.width;
+    return TextStyle(fontSize: kWidth / 20, color: Colors.red);
+  }
+
   static bigText(context) {
     var kWidth = MediaQuery.of(context).size.width;
     return TextStyle(
