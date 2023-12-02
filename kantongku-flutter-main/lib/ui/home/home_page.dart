@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:kantongku/component/color.dart';
 import 'package:kantongku/component/text_style.dart';
 import 'package:kantongku/model/summary_monthly_model.dart';
 import 'package:kantongku/repository/summary_repository.dart';
+import 'package:kantongku/ui/analysis/analysis_page.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -39,20 +41,9 @@ class _HomePageState extends State<HomePage> {
         child: ListView(
           children: [
             summaryWidget(deviceWidth),
+            toBillPageButton(deviceWidth),
             chartListWidget(deviceWidth),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: deviceWidth / 25),
-              child: PageViewDotIndicator(
-                size: Size(deviceWidth / 50, deviceWidth / 50),
-                unselectedSize: Size(deviceWidth / 70, deviceWidth / 70),
-                currentItem: selectedChartPage,
-                count: 2,
-                unselectedColor: Colors.black26,
-                selectedColor: Theme.of(context).primaryColor,
-                duration: const Duration(milliseconds: 200),
-                boxShape: BoxShape.circle,
-              ),
-            ),
+            pageViewDotsIndicator(deviceWidth),
           ],
         ),
       ),
@@ -95,6 +86,17 @@ class _HomePageState extends State<HomePage> {
                               'Rp ${NumberFormat('#,##0', 'ID').format(snapshot.data!.amount)}',
                               style: TextStyleComp.bigGreenText(context),
                             );
+                          } else if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return SpinKitFadingCube(
+                              color: Theme.of(context).primaryColor,
+                              size: deviceWidth / 15,
+                            );
+                          } else if (!snapshot.hasData) {
+                            return Text(
+                              'Rp 0',
+                              style: TextStyleComp.bigGreenText(context),
+                            );
                           } else {
                             return SpinKitFadingCube(
                               color: Theme.of(context).primaryColor,
@@ -123,6 +125,17 @@ class _HomePageState extends State<HomePage> {
                               'Rp ${NumberFormat('#,##0', 'ID').format(snapshot.data!.amount)}',
                               style: TextStyleComp.bigRedText(context),
                             );
+                          } else if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return SpinKitFadingCube(
+                              color: Theme.of(context).primaryColor,
+                              size: deviceWidth / 15,
+                            );
+                          } else if (!snapshot.hasData) {
+                            return Text(
+                              'Rp 0',
+                              style: TextStyleComp.bigRedText(context),
+                            );
                           } else {
                             return SpinKitFadingCube(
                               color: Theme.of(context).primaryColor,
@@ -136,6 +149,46 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget toBillPageButton(deviceWidth) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        deviceWidth / 20,
+        0,
+        deviceWidth / 20,
+        deviceWidth / 20,
+      ),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return AnalysisPage(
+              userId: userId,
+            );
+          }));
+        },
+        child: Container(
+          padding: EdgeInsets.all(deviceWidth / 20),
+          decoration: BoxDecoration(
+              color: GlobalColors.lighterLightBlue,
+              borderRadius:
+                  BorderRadius.all(Radius.circular(deviceWidth / 50))),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Analisis Keuanganmu',
+                style: TextStyleComp.mediumBoldText(context),
+              ),
+              Icon(
+                FontAwesomeIcons.circleArrowRight,
+                size: deviceWidth / 20,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -193,6 +246,13 @@ class _HomePageState extends State<HomePage> {
                           activationMode: ActivationMode.singleTap),
                       series: [
                         ColumnSeries<SummaryMonthly, dynamic>(
+                            dataLabelMapper: (datum, index) {
+                              return NumberFormat('#,##0', 'ID')
+                                  .format(datum.amount);
+                            },
+                            dataLabelSettings: const DataLabelSettings(
+                              isVisible: true,
+                            ),
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(deviceWidth / 70),
                               topRight: Radius.circular(deviceWidth / 70),
@@ -205,6 +265,13 @@ class _HomePageState extends State<HomePage> {
                       ]);
                 } else if (snapshot.hasError) {
                   return Text(snapshot.error!.toString());
+                } else if (snapshot.hasData && snapshot.data!.isEmpty) {
+                  return Center(
+                    child: SpinKitFadingCube(
+                      color: Theme.of(context).primaryColor,
+                      size: deviceWidth / 15,
+                    ),
+                  );
                 } else {
                   return SpinKitFadingCube(
                     color: Theme.of(context).primaryColor,
@@ -244,6 +311,13 @@ class _HomePageState extends State<HomePage> {
                           activationMode: ActivationMode.singleTap),
                       series: [
                         ColumnSeries<SummaryMonthly, dynamic>(
+                            dataLabelMapper: (datum, index) {
+                              return NumberFormat('#,##0', 'ID')
+                                  .format(datum.amount);
+                            },
+                            dataLabelSettings: const DataLabelSettings(
+                              isVisible: true,
+                            ),
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(deviceWidth / 70),
                               topRight: Radius.circular(deviceWidth / 70),
@@ -256,6 +330,13 @@ class _HomePageState extends State<HomePage> {
                       ]);
                 } else if (snapshot.hasError) {
                   return Text(snapshot.error!.toString());
+                } else if (snapshot.hasData && snapshot.data!.isEmpty) {
+                  return Center(
+                    child: SpinKitFadingCube(
+                      color: Theme.of(context).primaryColor,
+                      size: deviceWidth / 15,
+                    ),
+                  );
                 } else {
                   return SpinKitFadingCube(
                     color: Theme.of(context).primaryColor,
@@ -264,6 +345,22 @@ class _HomePageState extends State<HomePage> {
                 }
               }),
         ],
+      ),
+    );
+  }
+
+  Widget pageViewDotsIndicator(deviceWidth) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: deviceWidth / 25),
+      child: PageViewDotIndicator(
+        size: Size(deviceWidth / 50, deviceWidth / 50),
+        unselectedSize: Size(deviceWidth / 70, deviceWidth / 70),
+        currentItem: selectedChartPage,
+        count: 2,
+        unselectedColor: Colors.black26,
+        selectedColor: Theme.of(context).primaryColor,
+        duration: const Duration(milliseconds: 200),
+        boxShape: BoxShape.circle,
       ),
     );
   }

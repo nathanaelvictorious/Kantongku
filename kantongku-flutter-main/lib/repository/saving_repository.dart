@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 import 'package:kantongku/component/snackbar.dart';
+import 'package:kantongku/component/url_server.dart';
 import 'package:kantongku/model/saving_model.dart';
 import 'package:kantongku/model/transaction_model.dart';
 
 class SavingRepository {
-  static String urlServer = 'http://192.168.1.8:8000/api';
+  static String urlServer = UrlServer.urlServer;
 
   static Future<List<Saving>> getData(userId) async {
     Uri url = Uri.parse("$urlServer/savings/$userId");
@@ -51,18 +53,24 @@ class SavingRepository {
           "title": title,
           "goal_amount": goalAmount,
           "description": description,
+          "created_at":
+              DateFormat('yyyy-MM-dd').format(DateTime.now()).toString(),
         },
       );
+      var json = jsonDecode(response.body);
       if (response.statusCode == 201) {
         Navigator.pop(context);
         Navigator.pop(context);
 
         GlobalSnackBar.show(context, 'Tabungan berhasil ditambahkan.');
       } else {
+        debugPrint(json.toString());
         Navigator.pop(context);
         GlobalSnackBar.show(context, 'Tabungan gagal ditambahkan');
       }
     } catch (e) {
+      debugPrint(e.toString());
+
       Navigator.pop(context);
       GlobalSnackBar.show(context, e.toString());
     }

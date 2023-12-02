@@ -89,7 +89,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
           ButtonTheme(
             alignedDropdown: true,
             child: DropdownButtonFormField(
-                isExpanded: false,
+                isExpanded: true,
                 items: [
                   'Belanja',
                   'Cicilan',
@@ -122,6 +122,12 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                         const BorderSide(color: Colors.white, width: 1.0),
                   ),
                 ),
+                validator: (value) {
+                  if (value == null) {
+                    return 'Harus dipilih';
+                  }
+                  return null;
+                },
                 onChanged: (value) {
                   selectedCategory = value.toString();
                 }),
@@ -156,7 +162,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                 context: context,
                 initialDate: DateTime.now(),
                 firstDate: DateTime(2020),
-                lastDate: DateTime.now(),
+                lastDate: DateTime(2200),
               );
 
               selectedDate = DateFormat('yyyy-MM-dd').format(date!);
@@ -185,7 +191,7 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
             ),
             validator: (value) {
               if (value!.isEmpty) {
-                return 'Harus diisi';
+                return 'Harus dipilih';
               }
               return null;
             },

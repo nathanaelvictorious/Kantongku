@@ -349,9 +349,9 @@ class _DetailSavingPageState extends State<DetailSavingPage> {
                   );
                 } else {
                   return Center(
-                    child: Text(
-                      'Belum ada transaksi tabungan',
-                      style: TextStyleComp.smallBoldText(context),
+                    child: SpinKitFadingCube(
+                      color: Theme.of(context).primaryColor,
+                      size: deviceWidth / 15,
                     ),
                   );
                 }

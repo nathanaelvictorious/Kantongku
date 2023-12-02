@@ -183,9 +183,9 @@ class _TransactionPageState extends State<TransactionPage> {
               );
             } else {
               return Center(
-                child: Text(
-                  'Belum ada transaksi',
-                  style: TextStyleComp.smallBoldText(context),
+                child: SpinKitFadingCube(
+                  color: Theme.of(context).primaryColor,
+                  size: deviceWidth / 15,
                 ),
               );
             }

@@ -13,8 +13,8 @@ class GlobalModal {
               topRight: Radius.circular(deviceWidth / 20)),
         ),
         builder: (context) {
-          return WillPopScope(
-            onWillPop: () async => false,
+          return PopScope(
+           canPop: false,
             child: StatefulBuilder(builder: (context, StateSetter setState) {
               return IntrinsicHeight(
                 child: Padding(

@@ -77,7 +77,7 @@ class _UpdateBillPageState extends State<UpdateBillPage> {
       padding: EdgeInsets.all(deviceWidth / 20),
       child: ListView(
         children: [
-          isPaidDropDown(deviceWidth),
+          // isPaidDropDown(deviceWidth),
           dateBilllTextFormField(deviceWidth),
           nameBillTextFormField(deviceWidth),
           amountBillTextFormField(deviceWidth),
@@ -88,55 +88,55 @@ class _UpdateBillPageState extends State<UpdateBillPage> {
     );
   }
 
-  Widget isPaidDropDown(deviceWidth) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: deviceWidth / 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Status Tagihan',
-            style: TextStyleComp.mediumText(context),
-          ),
-          ButtonTheme(
-            alignedDropdown: true,
-            child: DropdownButtonFormField(
-                value: selectedIsPaid,
-                isExpanded: false,
-                items: ['Sudah dibayar', 'Belum dibayar']
-                    .map(
-                      (e) => DropdownMenuItem(
-                        value: e,
-                        child: Text(e),
-                      ),
-                    )
-                    .toList(),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: const Color.fromRGBO(238, 238, 238, 1),
-                  hintText: 'Pilih status bayar',
-                  hintStyle: TextStyleComp.mediumText(context),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(deviceWidth / 50)),
-                    borderSide:
-                        const BorderSide(color: Colors.white, width: 1.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(deviceWidth / 50)),
-                    borderSide:
-                        const BorderSide(color: Colors.white, width: 1.0),
-                  ),
-                ),
-                onChanged: (value) {
-                  selectedIsPaid = value.toString();
-                }),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget isPaidDropDown(deviceWidth) {
+  //   return Padding(
+  //     padding: EdgeInsets.only(bottom: deviceWidth / 20),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           'Status Tagihan',
+  //           style: TextStyleComp.mediumText(context),
+  //         ),
+  //         ButtonTheme(
+  //           alignedDropdown: true,
+  //           child: DropdownButtonFormField(
+  //               value: selectedIsPaid,
+  //               isExpanded: false,
+  //               items: ['Sudah dibayar', 'Belum dibayar']
+  //                   .map(
+  //                     (e) => DropdownMenuItem(
+  //                       value: e,
+  //                       child: Text(e),
+  //                     ),
+  //                   )
+  //                   .toList(),
+  //               decoration: InputDecoration(
+  //                 filled: true,
+  //                 fillColor: const Color.fromRGBO(238, 238, 238, 1),
+  //                 hintText: 'Pilih status bayar',
+  //                 hintStyle: TextStyleComp.mediumText(context),
+  //                 enabledBorder: OutlineInputBorder(
+  //                   borderRadius:
+  //                       BorderRadius.all(Radius.circular(deviceWidth / 50)),
+  //                   borderSide:
+  //                       const BorderSide(color: Colors.white, width: 1.0),
+  //                 ),
+  //                 focusedBorder: OutlineInputBorder(
+  //                   borderRadius:
+  //                       BorderRadius.all(Radius.circular(deviceWidth / 50)),
+  //                   borderSide:
+  //                       const BorderSide(color: Colors.white, width: 1.0),
+  //                 ),
+  //               ),
+  //               onChanged: (value) {
+  //                 selectedIsPaid = value.toString();
+  //               }),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget dateBilllTextFormField(deviceWidth) {
     return Padding(
@@ -162,8 +162,8 @@ class _UpdateBillPageState extends State<UpdateBillPage> {
               date = await showDatePicker(
                 context: context,
                 initialDate: DateTime.now(),
-                firstDate: DateTime(2020),
-                lastDate: DateTime.now(),
+                firstDate: DateTime(2001),
+                lastDate: DateTime(2200),
               );
 
               selectedDate = DateFormat('yyyy-MM-dd').format(date!);
@@ -345,7 +345,7 @@ class _UpdateBillPageState extends State<UpdateBillPage> {
                 ? widget.amount.toString()
                 : amountFormatter.getUnformattedValue().toString(),
             descCtl.text,
-            selectedIsPaid == 'Belum dibayar' ? '0' : '1',
+            widget.isPaid ? '1' : '0',
           );
         },
         child: Padding(

@@ -98,8 +98,8 @@ class _AddBillPageState extends State<AddBillPage> {
               date = await showDatePicker(
                 context: context,
                 initialDate: DateTime.now(),
-                firstDate: DateTime(2020),
-                lastDate: DateTime.now(),
+                firstDate: DateTime(2001),
+                lastDate: DateTime(2200),
               );
 
               selectedDate = DateFormat('yyyy-MM-dd').format(date!);
@@ -128,7 +128,7 @@ class _AddBillPageState extends State<AddBillPage> {
             ),
             validator: (value) {
               if (value!.isEmpty) {
-                return 'Harus diisi';
+                return 'Harus dipilih';
               }
               return null;
             },

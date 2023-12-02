@@ -2,11 +2,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:kantongku/component/snackbar.dart';
+import 'package:kantongku/component/url_server.dart';
 import 'package:kantongku/model/budget_model.dart';
 import 'package:kantongku/model/transaction_model.dart';
 
 class BudgetRepository {
-  static String urlServer = 'http://192.168.1.8:8000/api';
+  static String urlServer = UrlServer.urlServer;
 
   static Future<List<Budget>> getData(userId, date) async {
     Uri url = Uri.parse("$urlServer/budgets/$userId?date=$date");

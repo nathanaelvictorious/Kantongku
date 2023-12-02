@@ -105,9 +105,9 @@ class _BillPageState extends State<BillPage> {
               );
             } else {
               return Center(
-                child: Text(
-                  'Belum ada tagihan',
-                  style: TextStyleComp.smallBoldText(context),
+                child: SpinKitFadingCube(
+                  color: Theme.of(context).primaryColor,
+                  size: deviceWidth / 15,
                 ),
               );
             }

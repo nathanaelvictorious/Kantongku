@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:kantongku/component/url_server.dart';
 import 'package:kantongku/model/balance_model.dart';
 
 class BalanceRepository {
-  static String urlServer = 'http://192.168.1.8:8000/api';
+  static String urlServer = UrlServer.urlServer;
 
   static Future<Balance?> getData(userId) async {
     Uri url = Uri.parse("$urlServer/balance/$userId");

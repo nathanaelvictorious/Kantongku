@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:kantongku/component/snackbar.dart';
+import 'package:kantongku/component/url_server.dart';
 import 'package:kantongku/model/bill_model.dart';
 
 class BillRepository {
-  static String urlServer = 'http://192.168.1.8:8000/api';
+  static String urlServer = UrlServer.urlServer;
 
   static Future<List<Bill>> getData(userId) async {
     Uri url = Uri.parse("$urlServer/bill-reminders/$userId");

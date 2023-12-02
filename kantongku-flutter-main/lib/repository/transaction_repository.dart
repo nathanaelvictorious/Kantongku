@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:kantongku/component/snackbar.dart';
+import 'package:kantongku/component/url_server.dart';
+import 'package:kantongku/model/transaction_each_category_model.dart';
 import 'package:kantongku/model/transaction_model.dart';
 
 class TransactionRepository {
-  static String urlServer = 'http://192.168.1.8:8000/api';
+  static String urlServer = UrlServer.urlServer;
 
   static Future<List<Transaction>> getAllData(userId) async {
     Uri url = Uri.parse("$urlServer/transactions/user/$userId");
@@ -37,6 +39,27 @@ class TransactionRepository {
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body) as List;
       return jsonResponse.map((e) => Transaction.createFromJson(e)).toList();
+    }
+    return [];
+  }
+
+  static Future<List<TransactionEachCategory>> getPeriodicCategoryData(
+      userId, periode) async {
+    Uri url = Uri.parse(
+        "$urlServer/transactions/each-category-count/$userId?date=$periode");
+
+    var response = await get(
+      url,
+      headers: {
+        'Accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body) as List;
+      return jsonResponse
+          .map((e) => TransactionEachCategory.createFromJson(e))
+          .toList();
     }
     return [];
   }
@@ -89,6 +112,65 @@ class TransactionRepository {
 
         GlobalSnackBar.show(
             context, 'Transaksi berhasil ditambahkan ke anggaran.');
+      } else {
+        Navigator.pop(context);
+        GlobalSnackBar.show(context, 'Transaksi gagal ditambahkan');
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      GlobalSnackBar.show(context, e.toString());
+    }
+  }
+
+  static Future addDataTransBillWithoutBudget(
+      context, userId, billId, category, amount, dateTime, description) async {
+    try {
+      Response response = await post(
+        Uri.parse("$urlServer/transactions"),
+        body: {
+          "user_id": userId,
+          "bill_reminder_id": billId,
+          "category": category,
+          "amount": amount,
+          "date_time": dateTime,
+          "description": description,
+        },
+      );
+      if (response.statusCode == 201) {
+        Navigator.pop(context);
+        Navigator.pop(context);
+
+        GlobalSnackBar.show(context, 'Transaksi tagihan berhasil ditambahkan.');
+      } else {
+        Navigator.pop(context);
+        GlobalSnackBar.show(context, 'Transaksi gagal ditambahkan');
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      GlobalSnackBar.show(context, e.toString());
+    }
+  }
+
+  static Future addDataTransBillWithBudget(context, userId, budgetId, billId,
+      category, amount, dateTime, description) async {
+    try {
+      Response response = await post(
+        Uri.parse("$urlServer/transactions"),
+        body: {
+          "user_id": userId,
+          "budget_id": budgetId,
+          "bill_reminder_id": billId,
+          "category": category,
+          "amount": amount,
+          "date_time": dateTime,
+          "description": description,
+        },
+      );
+      if (response.statusCode == 201) {
+        Navigator.pop(context);
+        Navigator.pop(context);
+
+        GlobalSnackBar.show(context, 'Transaksi tagihan berhasil ditambahkan.');
       } else {
         Navigator.pop(context);
         GlobalSnackBar.show(context, 'Transaksi gagal ditambahkan');

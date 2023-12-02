@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart';
+import 'package:kantongku/component/url_server.dart';
 import 'package:kantongku/model/summary_all_model.dart';
 import 'package:kantongku/model/summary_monthly_model.dart';
 
 class SummaryRepository {
-  static String urlServer = 'http://192.168.1.8:8000/api';
+  static String urlServer = UrlServer.urlServer;
 
   static Future<SummaryFinancial?> getData(userId, category) async {
     Uri url = Uri.parse(

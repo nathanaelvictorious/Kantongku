@@ -160,9 +160,9 @@ class _BudgetPageState extends State<BudgetPage> {
               );
             } else {
               return Center(
-                child: Text(
-                  'Belum ada anggaran',
-                  style: TextStyleComp.smallBoldText(context),
+                child: SpinKitFadingCube(
+                  color: Theme.of(context).primaryColor,
+                  size: deviceWidth / 15,
                 ),
               );
             }

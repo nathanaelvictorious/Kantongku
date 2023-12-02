@@ -105,9 +105,9 @@ class _SavingPageState extends State<SavingPage> {
               );
             } else {
               return Center(
-                child: Text(
-                  'Belum ada tabungan',
-                  style: TextStyleComp.smallBoldText(context),
+                child: SpinKitFadingCube(
+                  color: Theme.of(context).primaryColor,
+                  size: deviceWidth / 15,
                 ),
               );
             }

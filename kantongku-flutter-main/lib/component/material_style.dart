@@ -5,6 +5,7 @@ import 'package:kantongku/component/color.dart';
 class GlobalMaterialAppStyle {
   static ThemeData materialApp(context) {
     return ThemeData(
+      useMaterial3: false,
         primaryColor: GlobalColors.blue,
         colorScheme: ColorScheme.fromSwatch().copyWith(
           primary: GlobalColors.blue,

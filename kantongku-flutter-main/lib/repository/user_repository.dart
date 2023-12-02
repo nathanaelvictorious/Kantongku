@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:kantongku/component/snackbar.dart';
+import 'package:kantongku/component/url_server.dart';
 import 'package:kantongku/model/user_model.dart';
 import 'package:kantongku/ui/login/login_page.dart';
 import 'package:kantongku/ui/navbar/navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserRepository {
-  static String urlServer = 'http://192.168.1.8:8000/api';
+  static String urlServer = UrlServer.urlServer;
 
   static Future register(context, name, email, username, password) async {
     Uri url = Uri.parse("$urlServer/users");
@@ -29,7 +30,7 @@ class UserRepository {
 
       if (response.statusCode == 201) {
         Navigator.pop(context);
-
+        Navigator.pop(context);
         GlobalSnackBar.show(
             context, 'Selamat! Registrasi akun berhasil, silahkan login');
       } else {

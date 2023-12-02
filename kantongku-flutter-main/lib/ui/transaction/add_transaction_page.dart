@@ -5,8 +5,10 @@ import 'package:intl/intl.dart';
 import 'package:kantongku/component/modal.dart';
 import 'package:kantongku/component/snackbar.dart';
 import 'package:kantongku/component/text_style.dart';
+import 'package:kantongku/model/bill_model.dart';
 import 'package:kantongku/model/budget_model.dart';
 import 'package:kantongku/model/saving_model.dart';
+import 'package:kantongku/repository/bill_repository.dart';
 import 'package:kantongku/repository/budget_repository.dart';
 import 'package:kantongku/repository/saving_repository.dart';
 import 'package:kantongku/repository/transaction_repository.dart';
@@ -20,15 +22,17 @@ class AddTransactionPage extends StatefulWidget {
 }
 
 class _AddTransactionPageState extends State<AddTransactionPage> {
-  bool isBudget = false;
+  bool isBudget = false, isBill = false;
   String userId = '',
       getDateNow = '',
       selectedDate = '',
       selectedCategory = '',
       selectedBudget = '',
+      selectedBill = '',
       selectedSaving = '';
   List<Budget> budgetItems = [];
   List<Saving> savingItems = [];
+  List<Bill> billItems = [];
   TextEditingController amountCtl = TextEditingController();
   TextEditingController descCtl = TextEditingController();
   final CurrencyTextInputFormatter amountFormatter = CurrencyTextInputFormatter(
@@ -77,8 +81,14 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         children: [
           categoryDropDown(deviceWidth),
           selectedCategory == 'Pengeluaran'
-              ? checklistToBudget(deviceWidth)
+              ? Column(
+                  children: [
+                    checklistIsBill(deviceWidth),
+                    checklistToBudget(deviceWidth),
+                  ],
+                )
               : const SizedBox(),
+          isBill ? billDropDown(deviceWidth) : const SizedBox(),
           isBudget ? budgetDropDown(deviceWidth) : const SizedBox(),
           selectedCategory == 'Tabungan'
               ? savingDropDown(deviceWidth)
@@ -105,7 +115,11 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
             alignedDropdown: true,
             child: DropdownButtonFormField(
               isExpanded: false,
-              items: ['Pendapatan', 'Pengeluaran', 'Tabungan']
+              items: [
+                'Pendapatan',
+                'Pengeluaran',
+                'Tabungan',
+              ]
                   .map(
                     (e) => DropdownMenuItem(
                       value: e,
@@ -136,7 +150,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 });
               },
               validator: (value) {
-                if (value!.isEmpty) {
+                if (value == null) {
                   return 'Harus dipilih';
                 }
                 return null;
@@ -195,7 +209,9 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                         ),
                       ),
                       onChanged: (value) {
-                        selectedBudget = value.toString();
+                        setState(() {
+                          selectedBudget = value.toString();
+                        });
                       },
                       validator: (value) {
                         if (value!.isEmpty) {
@@ -222,6 +238,27 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
     );
   }
 
+  Widget checklistIsBill(deviceWidth) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: deviceWidth / 20),
+      child: CheckboxListTile(
+        contentPadding: EdgeInsets.zero,
+        title: Text(
+          'Apakah transaksi tagihan?',
+          style: TextStyleComp.mediumBoldText(context),
+        ),
+        checkColor: Colors.black,
+        dense: true,
+        visualDensity: VisualDensity.compact,
+        value: isBill,
+        controlAffinity: ListTileControlAffinity.leading,
+        onChanged: (value) {
+          setState(() => isBill = value!);
+        },
+      ),
+    );
+  }
+
   Widget checklistToBudget(deviceWidth) {
     return Padding(
       padding: EdgeInsets.only(bottom: deviceWidth / 20),
@@ -239,6 +276,82 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         onChanged: (value) {
           setState(() => isBudget = value!);
         },
+      ),
+    );
+  }
+
+  Widget billDropDown(deviceWidth) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: deviceWidth / 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Tagihan',
+            style: TextStyleComp.mediumText(context),
+          ),
+          ButtonTheme(
+            alignedDropdown: true,
+            child: FutureBuilder(
+                future: BillRepository.getData(userId),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    billItems.clear();
+                    billItems.addAll(snapshot.data!);
+                    return DropdownButtonFormField(
+                      isExpanded: false,
+                      items: billItems
+                          .map(
+                            (e) => DropdownMenuItem(
+                              value: e.id,
+                              child: Text(e.name),
+                            ),
+                          )
+                          .toList(),
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: const Color.fromRGBO(238, 238, 238, 1),
+                        hintText: 'Pilih tagihan',
+                        hintStyle: TextStyleComp.mediumText(context),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(deviceWidth / 50)),
+                          borderSide:
+                              const BorderSide(color: Colors.white, width: 1.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(deviceWidth / 50)),
+                          borderSide:
+                              const BorderSide(color: Colors.white, width: 1.0),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedBill = value.toString();
+                        });
+                      },
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Harus dipilih';
+                        }
+                        return null;
+                      },
+                    );
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return Center(
+                      child: SpinKitFadingCube(
+                        color: Theme.of(context).primaryColor,
+                        size: deviceWidth / 15,
+                      ),
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                }),
+          ),
+        ],
       ),
     );
   }
@@ -290,7 +403,9 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                         ),
                       ),
                       onChanged: (value) {
-                        selectedSaving = value.toString();
+                        setState(() {
+                          selectedSaving = value.toString();
+                        });
                       },
                       validator: (value) {
                         if (value!.isEmpty) {
@@ -421,7 +536,8 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
               );
             } else if ((selectedCategory == 'Pendapatan' ||
                     selectedCategory == 'Pengeluaran') &&
-                !isBudget) {
+                !isBudget &&
+                !isBill) {
               TransactionRepository.addDataWithoutBudgetSaving(
                 context,
                 userId,
@@ -430,11 +546,36 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                 selectedDate,
                 descCtl.text,
               );
-            } else if (selectedCategory == 'Pengeluaran' && isBudget) {
+            } else if (selectedCategory == 'Pengeluaran' &&
+                isBudget &&
+                !isBill) {
               TransactionRepository.addDataTransBudget(
                   context,
                   userId,
                   selectedBudget,
+                  selectedCategory,
+                  amountFormatter.getUnformattedValue().toString(),
+                  selectedDate,
+                  descCtl.text);
+            } else if (selectedCategory == 'Pengeluaran' &&
+                isBill &&
+                !isBudget) {
+              TransactionRepository.addDataTransBillWithoutBudget(
+                  context,
+                  userId,
+                  selectedBill,
+                  selectedCategory,
+                  amountFormatter.getUnformattedValue().toString(),
+                  selectedDate,
+                  descCtl.text);
+            } else if (selectedCategory == 'Pengeluaran' &&
+                isBill &&
+                isBudget) {
+              TransactionRepository.addDataTransBillWithBudget(
+                  context,
+                  userId,
+                  selectedBudget,
+                  selectedBill,
                   selectedCategory,
                   amountFormatter.getUnformattedValue().toString(),
                   selectedDate,
