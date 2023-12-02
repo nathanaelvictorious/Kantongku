@@ -1,0 +1,2630 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "KantongKu API",
+        "version": "1.0.0",
+        "description": "OpenAPI untuk RESTful API KantongKu (Aplikasi Finansial)."
+    },
+    "servers": [
+        {
+            "url": "https://localhost",
+            "description": "KantongKu RESTful API Server"
+        }
+    ],
+    "paths": {
+        "/api/users": {
+            "post": {
+                "tags": ["Users"],
+                "summary": "Registrasi user baru.",
+                "description": "Registrasi user baru.",
+                "requestBody": {
+                    "required": true,
+                    "description": "Berikut adalah data yang diperlukan pada request body untuk melakukan registrasi user baru.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "username",
+                                    "name",
+                                    "password",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "minLength": 3,
+
+                                        "uniqueItems": true
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "minLength": 3
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "minLength": 6
+                                    },
+                                    "email": {
+                                        "type": "string",
+
+                                        "uniqueItems": true
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "registrasi kadita": {
+                                    "description": "Contoh Registrasi mommy kadita",
+                                    "value": {
+                                        "username": "kadita",
+                                        "name": "Kadita Kaditu",
+                                        "password": "123456",
+                                        "email": "kadita@example.com"
+                                    }
+                                },
+                                "registrasi selena": {
+                                    "description": "Contoh Registrasi mommy selena",
+                                    "value": {
+                                        "username": "selena",
+                                        "name": "Selena Seleni",
+                                        "password": "123456",
+                                        "email": "selena@example.com"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Berhasil registrasi user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "username": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "email": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Berhasil": {
+                                        "description": "Berhasil registrasi user baru",
+                                        "value": {
+                                            "id": "1c2d5e34-5678-9abc-d012-3456789abcde",
+                                            "username": "kadita",
+                                            "name": "Kadita Kaditu",
+                                            "email": "kadita@example.com"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Gagal registrasi user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Gagal": {
+                                        "description": "Gagal registrasi user baru.",
+                                        "value": {
+                                            "errors": [
+                                                "username tidak boleh kosong",
+                                                "username harus lebih dari 3 huruf",
+                                                "name tidak boleh kosong",
+                                                "name harus lebih dari 3 huruf",
+                                                "password tidak boleh kosong",
+                                                "password harus lebih dari 5 huruf",
+                                                "email tidak boleh kosong"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/login": {
+            "post": {
+                "tags": ["Users"],
+
+                "summary": "Login user.",
+                "description": "Login user.",
+                "requestBody": {
+                    "required": true,
+                    "description": "Berikut adalah data yang diperlukan pada request body untuk melakukan post login request",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["username", "password"],
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "login kadita": {
+                                    "description": "Contoh login user (kadita).",
+                                    "value": {
+                                        "username": "kadita",
+                                        "password": "123456"
+                                    }
+                                },
+                                "login selena": {
+                                    "description": "Contoh login user (selena).",
+                                    "value": {
+                                        "username": "selena",
+                                        "password": "123456"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User berhasil login.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "username": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "email": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "kadita": {
+                                        "description": "User berhasil login.",
+                                        "value": {
+                                            "id": "1c2ae7a3-5678-9sdq-d012-3456789atqwe",
+                                            "username": "kadita",
+                                            "name": "Kadita Kaditu",
+                                            "email": "kadita@example.com"
+                                        }
+                                    },
+                                    "selena": {
+                                        "description": "User berhasil login.",
+                                        "value": {
+                                            "id": "5v1ae7a3-5121-5wac-w124-3455129awraq",
+                                            "username": "selena",
+                                            "name": "Selena Seleni",
+                                            "email": "selena@example.com"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "User gagal login.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Gagal login": {
+                                        "description": "User gagal login.",
+                                        "value": {
+                                            "errors": "Username atau password salah!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/{userId}": {
+            "get": {
+                "tags": ["Users"],
+                "summary": "Get data user by userId.",
+                "description": "Get data user by userId.",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "description": "userId digunakan untuk mendapatkan data user tersebut.",
+                        "schema": {
+                            "type": "string",
+                            "minLength": 3,
+                            "maxLength": 100
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User ditemukan.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "username": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "email": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "kadita": {
+                                        "description": "User ditemukan.",
+                                        "value": {
+                                            "id": "1c2ae7a3-5678-9sdq-d012-3456789atqwe",
+                                            "username": "kadita",
+                                            "name": "Kadita Kaditu",
+                                            "email": "kadita@example.com"
+                                        }
+                                    },
+                                    "selena": {
+                                        "description": "User ditemukan.",
+                                        "value": {
+                                            "id": "5v1ae7a3-5121-5wac-w124-3455129awraq",
+                                            "username": "selena",
+                                            "name": "Selena Seleni",
+                                            "email": "selena@example.com"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Gagal login": {
+                                        "description": "User tidak ditemukan",
+                                        "value": {
+                                            "errors": "User tidak ditemukan!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/balance/{userId}": {
+            "get": {
+                "tags": ["Saldo User"],
+
+                "summary": "Get data saldo user.",
+                "description": "Get data saldo user.",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "description": "userId digunakan untuk mendapatkan data saldo user tersebut.",
+                        "schema": {
+                            "type": "string",
+                            "minLength": 3,
+                            "maxLength": 100
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Saldo user ditemukan.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "balance": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "kadita": {
+                                        "description": "Saldo ditemukan.",
+                                        "value": {
+                                            "id": "9aaddee3-5df8-41b4-859b-37958587719c",
+                                            "balance": 100000000
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "user tidak ditemukan": {
+                                        "description": "User tidak ditemukan",
+                                        "value": {
+                                            "errors": "user tidak ditemukan"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bill-reminders/{userId}": {
+            "get": {
+                "tags": ["Tagihan"],
+
+                "summary": "Get semua data tagihan berdasarkan userId.",
+                "description": "Get semua data tagihan user.",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "description": "userId digunakan untuk mendapatkan data tagihan user tersebut. Ingat, untuk metode get menggunakan user id.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/api/bill-reminders/92as8d1-7281-7dq9-su19-48ssdah18"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data tagihan ditemukan.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string"
+                                            },
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "current_amount": {
+                                                "type": "integer"
+                                            },
+                                            "amount": {
+                                                "type": "integer"
+                                            },
+                                            "due_date": {
+                                                "type": "string"
+                                            },
+                                            "description": {
+                                                "type": "string"
+                                            },
+                                            "is_paid_off": {
+                                                "type": "boolean"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Tagihan kadita": {
+                                        "description": "Tagihan ditemukan.",
+                                        "value": [
+                                            {
+                                                "id": "5v1ae7a3-5121-5wac-w124-3455129awraq",
+                                                "name": "Beli Ifong 15 Pro Maks",
+                                                "current_amount": 0,
+                                                "amount": 20000000,
+                                                "due_date": "2023-11-18",
+                                                "description": "Beli ifong 15 pro maks untuk kebutuhan mengonten tiktok",
+                                                "is_paid_off": false
+                                            },
+                                            {
+                                                "id": "5v1faa3-4152-5wac-w124-3441229vasaq",
+                                                "name": "Beli Mac Book Air",
+                                                "current_amount": 40000000,
+                                                "amount": 40000000,
+                                                "due_date": "2023-11-19",
+                                                "description": "Beli mac book air untuk kebutuhan main pb",
+                                                "is_paid_off": true
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tagihan tidak ditemukan!",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Tagihan kosong": {
+                                        "description": "Tagihan tidak ditemukan",
+                                        "value": {
+                                            "errors": "Tagihan tidak ditemukan!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bill-reminders": {
+            "post": {
+                "tags": ["Tagihan"],
+
+                "summary": "Tambah data tagihan user.",
+                "description": "Tambah data tagihan user.",
+                "requestBody": {
+                    "required": true,
+                    "description": "Berikut adalah data yang diperlukan pada request body untuk melakukan tambah data tagihan user.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "user_id",
+                                    "name",
+                                    "amount",
+                                    "due_date"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "amount": {
+                                        "type": "integer"
+                                    },
+                                    "due_date": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Tambah data tagihan kadita": {
+                                    "description": "Contoh tambah data tagihan kadita",
+                                    "value": {
+                                        "user_id": "82ad28aj-5121-5wac-w124-481j428d8",
+                                        "name": "Beli Xiomai Redmi 5",
+                                        "amount": 1500000,
+                                        "due_date": "2023-11-19",
+                                        "description": "Beli xiomai redmi 5 buat main genshin"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Berhasil tambah data tagihan user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "current_amount": {
+                                            "type": "integer"
+                                        },
+                                        "amount": {
+                                            "type": "integer"
+                                        },
+                                        "due_date": {
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "type": "string"
+                                        },
+                                        "is_paid_off": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Tagihan kadita": {
+                                        "description": "Tagihan berhasil dibuat.",
+                                        "value": {
+                                            "id": "5v1ae7a3-5121-5wac-w124-3455129awraq",
+                                            "name": "Beli Xiomai Redmi 5",
+                                            "current_amount": 0,
+                                            "amount": 1500000,
+                                            "due_date": "2023-11-19",
+                                            "description": "Beli xiomai redmi 5 buat main genshin",
+                                            "is_paid_off": false
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Gagal tambah data tagihan user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Gagal tambah tagihan": {
+                                        "description": "Gagal menambah data tagihan user.",
+                                        "value": {
+                                            "errors": [
+                                                "name tidak boleh kosong",
+                                                "amount tidak boleh kosong",
+                                                "due_date tidak boleh kosong"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bill-reminders/{billReminderId}": {
+            "put": {
+                "tags": ["Tagihan"],
+
+                "summary": "Update data tagihan user.",
+                "description": "Update data tagihan user.",
+                "parameters": [
+                    {
+                        "name": "billReminderId",
+                        "in": "path",
+                        "required": true,
+                        "description": "billReminderId digunakan untuk melakukan update data tagihan user sesuai dengan billReminderId",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/api/bill-reminders/5v1ae7a3-5121-5wac-w124-3455129awraq"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "Berikut adalah data yang diperlukan pada request body untuk melakukan Update data tagihan user.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "name",
+                                    "amount",
+                                    "due_date",
+                                    "is_paid_off"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "amount": {
+                                        "type": "integer"
+                                    },
+                                    "due_date": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "is_paid_off": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Tambah data tagihan kadita": {
+                                    "description": "Contoh request body update data tagihan kadita.",
+                                    "value": {
+                                        "name": "Beli Xiomai Redmi 13",
+                                        "amount": 10000000,
+                                        "due_date": "2023-11-19",
+                                        "description": "Beli xiomai redmi 13 buat main pubg",
+                                        "is_paid_off": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Berhasil update data tagihan user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "current_amount": {
+                                            "type": "integer"
+                                        },
+                                        "amount": {
+                                            "type": "integer"
+                                        },
+                                        "due_date": {
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "type": "string"
+                                        },
+                                        "is_paid_off": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Update tagihan kadita": {
+                                        "description": "Tagihan berhasil diupdate.",
+                                        "value": {
+                                            "id": "5v1ae7a3-5121-5wac-w124-3455129awraq",
+                                            "name": "Beli Xiomai Redmi 13",
+                                            "current_amount": 0,
+                                            "amount": 10000000,
+                                            "due_date": "2023-11-19",
+                                            "description": "Beli xiomai redmi 13 buat main pubg",
+                                            "is_paid_off": true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Gagal update data tagihan user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Gagal update tagihan": {
+                                        "description": "Gagal update data tagihan user.",
+                                        "value": {
+                                            "errors": [
+                                                "id tidak boleh kosong",
+                                                "name tidak boleh kosong",
+                                                "amount tidak boleh kosong",
+                                                "due_date tidak boleh kosong",
+                                                "is_paid_off tidak boleh kosong"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Tagihan"],
+
+                "summary": "Hapus data tagihan user.",
+                "description": "Hapus data tagihan user.",
+                "parameters": [
+                    {
+                        "name": "billReminderId",
+                        "in": "path",
+                        "required": true,
+                        "description": "billReminderId digunakan untuk menghapus data tagihan user. Ingat, untuk metode delete menggunakan billReminderId",
+                        "schema": {
+                            "type": "string",
+                            "minLength": 3,
+                            "maxLength": 100
+                        },
+                        "example": "/api/bill-reminders/5v1ae7a3-5121-5wac-w124-3455129awraq"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data tagihan user berhasil dihapus.",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Hapus Berhasil": {
+                                        "value": {
+                                            "message": "data tagihan berhasil dihapus"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data tagihan user gagal dihapus karena data tagihan nya tidak ada.",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Hapus Berhasil": {
+                                        "value": {
+                                            "errors": "data tagihan tidak ditemukan"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/budgets/{userId}": {
+            "get": {
+                "tags": ["Anggaran"],
+
+                "summary": "Get semua data anggaran berdasarkan userId.",
+                "description": "Get semua data anggaran user.",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "description": "userId digunakan untuk mendapatkan data anggaran user tersebut. Ingat, untuk metode get menggunakan user id.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/api/budgets/9asd71h-5121-5wac-w124-3455129awraq"
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": false,
+                        "description": "data date digunakan untuk mendapatkan data anggaran sesuai bulan dan tahun. Tapi query parameter ini tidak wajib.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/api/budgets/9asd71h-5121-5wac-w124-3455129awraq?date=2023-11-01"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data anggaran ditemukan.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string"
+                                            },
+                                            "category": {
+                                                "type": "string"
+                                            },
+                                            "title": {
+                                                "type": "string"
+                                            },
+                                            "spend_total": {
+                                                "type": "integer"
+                                            },
+                                            "limit": {
+                                                "type": "integer"
+                                            },
+                                            "description": {
+                                                "type": "string"
+                                            },
+                                            "date": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Anggaran kadita": {
+                                        "description": "Data anggaran diberikan sesuai dengan data request yang dikirim, jika ada data date, maka akan dikembalikan sesuai bulan dan tahun dari data date. Jika tidak ada, maka semua data anggaran akan diberikan.",
+                                        "value": [
+                                            {
+                                                "id": "5v1ae7a3-5121-5wac-w124-3455129awraq",
+                                                "category": "Entertainment",
+                                                "title": "Anggaran Entertainment November",
+                                                "spend_total": 0,
+                                                "limit": 1000000,
+                                                "description": "Anggaran untuk kebutuhan entertainment dibulan November.",
+                                                "date": "2023-11-01"
+                                            },
+                                            {
+                                                "id": "5v1ds1253-5121-5wac-w124-3441229gaswq",
+                                                "category": "Transportasi",
+                                                "title": "Anggaran Transportasi November",
+                                                "spend_total": 0,
+                                                "limit": 500000,
+                                                "description": "Anggaran untuk kebutuhan transportasi bulan November.",
+                                                "date": "2023-11-01"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Anggaran tidak ditemukan!",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Anggaran kosong": {
+                                        "description": "Anggaran tidak ditemukan",
+                                        "value": {
+                                            "errors": "anggaran tidak ditemukan"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/budgets": {
+            "post": {
+                "tags": ["Anggaran"],
+
+                "summary": "Tambah data anggaran user.",
+                "description": "Tambah data anggaran user.",
+                "requestBody": {
+                    "required": true,
+                    "description": "Berikut adalah data yang diperlukan pada request body untuk melakukan tambah data anggaran user.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "user_id",
+                                    "category",
+                                    "title",
+                                    "limit",
+                                    "description",
+                                    "date"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "category": {
+                                        "type": "string"
+                                    },
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "limit": {
+                                        "type": "integer"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "date": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Tambah data anggaran kadita": {
+                                    "description": "Contoh tambah data anggaran kadita",
+                                    "value": {
+                                        "user_id": "9aaddee2-ffba-4b5d-bee7-9421d49a4aa5",
+                                        "title": "Anggaran Transportasi November",
+                                        "category": "Transportasi",
+                                        "limit": 1000000,
+                                        "description": "Anggaran untuk kebutuhan transportasi November",
+                                        "date": "2023-11-01"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Berhasil tambah data anggaran user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "category": {
+                                            "type": "string"
+                                        },
+                                        "title": {
+                                            "type": "string"
+                                        },
+                                        "spend_total": {
+                                            "type": "integer"
+                                        },
+                                        "limit": {
+                                            "type": "integer"
+                                        },
+                                        "description": {
+                                            "type": "string"
+                                        },
+                                        "date": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Anggaran kadita": {
+                                        "description": "Tagihan berhasil dibuat.",
+                                        "value": {
+                                            "id": "9aadfca3-ecb9-4188-aabc-a084b26b2703",
+                                            "category": "Transportasi",
+                                            "title": "Anggaran Transportasi November",
+                                            "spend_total": 0,
+                                            "limit": 1000000,
+                                            "description": "Anggaran untuk kebutuhan transportasi November",
+                                            "date": "2023-11-01"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Gagal tambah data anggaran user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Gagal tambah anggaran": {
+                                        "description": "Gagal menambah data anggaran user.",
+                                        "value": {
+                                            "errors": "validasi data gagal"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/budgets/{budgetId}": {
+            "put": {
+                "tags": ["Anggaran"],
+
+                "summary": "Update data anggaran user.",
+                "description": "Update data anggaran user.",
+                "parameters": [
+                    {
+                        "name": "budgetId",
+                        "in": "path",
+                        "required": true,
+                        "description": "budgetId digunakan untuk melakukan update data anggaran user sesuai dengan budgetId",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/api/budgets/90qwd18-9217-5wac-w124-34818wada2"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "Berikut adalah data yang diperlukan pada request body untuk melakukan Update data anggaran user.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["limit", "description"],
+                                "properties": {
+                                    "title": {
+                                        "type": "integer"
+                                    },
+                                    "limit": {
+                                        "type": "integer"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Update data anggaran kadita": {
+                                    "description": "Contoh request body update data anggaran kadita.",
+                                    "value": {
+                                        "title": "Cicilan HP Xiaomi",
+                                        "limit": 1000000,
+                                        "description": "Anggaran untuk cicilan HP Xiaomi Baru"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Berhasil update data anggaran user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "budget_category": {
+                                            "type": "string"
+                                        },
+                                        "spend_total": {
+                                            "type": "integer"
+                                        },
+                                        "limit": {
+                                            "type": "integer"
+                                        },
+                                        "description": {
+                                            "type": "string"
+                                        },
+                                        "date": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Update anggaran kadita": {
+                                        "description": "Tagihan berhasil diupdate.",
+                                        "value": {
+                                            "id": "9aadfbbe-b25b-4c86-9f4c-fb37908a038f",
+                                            "category": "Cicilan",
+                                            "title": "Cicilan HP Xiaomi",
+                                            "spend_total": 0,
+                                            "limit": 1000000,
+                                            "description": "Anggaran untuk cicilan HP Xiaomi Baru",
+                                            "date": "2023-11-01"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Gagal update data anggaran user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Gagal update anggaran": {
+                                        "description": "Gagal update data anggaran user.",
+                                        "value": {
+                                            "errors": "validasi data gagal"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Anggaran"],
+                "summary": "Hapus data anggaran user.",
+                "description": "Hapus data anggaran user.",
+                "parameters": [
+                    {
+                        "name": "budgetId",
+                        "in": "path",
+                        "required": true,
+                        "description": "budgetId digunakan untuk menghapus data anggaran user.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/api/budgets/90qwd18-9217-5wac-w124-34818wada2"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data anggaran user berhasil dihapus.",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Hapus Berhasil": {
+                                        "value": {
+                                            "message": "data anggaran berhasil dihapus"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data anggaran user gagal dihapus karena data anggaran nya tidak ada.",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Hapus Berhasil": {
+                                        "value": {
+                                            "errors": "data anggaran tidak ditemukan"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/savings/{userId}": {
+            "get": {
+                "tags": ["Tabungan"],
+                "summary": "Get semua data tabungan user berdasarkan userId.",
+                "description": "Get semua data tabungan user.",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "description": "userId digunakan untuk mendapatkan data tabungan user tersebut. Ingat, untuk metode get menggunakan user id.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/api/savings/9asd71h-5121-5wac-w124-3455129awraq"
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": false,
+                        "description": "data date digunakan untuk mendapatkan data tabungan sesuai bulan dan tahun. Tapi query parameter ini tidak wajib.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/api/savings/9asd71h-5121-5wac-w124-3455129awraq?date=2023-11-01"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data tabungan ditemukan.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string"
+                                            },
+                                            "title": {
+                                                "type": "string"
+                                            },
+                                            "current_balance": {
+                                                "type": "integer"
+                                            },
+                                            "goal_amount": {
+                                                "type": "integer"
+                                            },
+                                            "description": {
+                                                "type": "string"
+                                            },
+                                            "is_achieved": {
+                                                "type": "boolean"
+                                            },
+                                            "created_at": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Anggaran kadita": {
+                                        "description": "List data tabungan user (kadita).",
+                                        "value": [
+                                            {
+                                                "id": "9aae0706-a17f-467a-8170-51357b05d674",
+                                                "title": "Tabungan MacBook Pro M2",
+                                                "current_balance": 0,
+                                                "goal_amount": 20000000,
+                                                "description": "Tabungan untuk beli MacBook Pro M2",
+                                                "is_achieved": false,
+                                                "created_at": "2023-11-01"
+                                            },
+                                            {
+                                                "id": "9aae08c0-fde7-4947-aad3-22f0d394e437",
+                                                "title": "Tabungan iPhone 0.5",
+                                                "current_balance": 0,
+                                                "goal_amount": 10000,
+                                                "description": "Tabungan untuk beli iPhone 0.5",
+                                                "is_achieved": false,
+                                                "created_at": "2023-11-10"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data tabungan tidak ditemukan.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Tabungan kosong": {
+                                        "description": "Data tabungan tidak ditemukan.",
+                                        "value": {
+                                            "errors": "tabungan tidak ditemukan"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/savings": {
+            "post": {
+                "tags": ["Tabungan"],
+                "summary": "Tambah data tabungan user.",
+                "description": "Tambah data tabungan user.",
+                "requestBody": {
+                    "required": true,
+                    "description": "Berikut adalah data yang diperlukan pada request body untuk melakukan tambah data tabungan user.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "user_id",
+                                    "title",
+                                    "goal_amount",
+                                    "description"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "goal_amount": {
+                                        "type": "integer"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "created_at": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Tambah data tabungan kadita": {
+                                    "description": "Contoh request body untuk tambah data tabungan kadita",
+                                    "value": {
+                                        "user_id": "9aaddee2-ffba-4b5d-bee7-9421d49a4aa5",
+                                        "title": "Tabungan MacBook Air",
+                                        "goal_amount": 15000000,
+                                        "description": "Tabungan untuk beli MacBook Air",
+                                        "created_at": "2023-11-01"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Berhasil tambah data anggaran user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "title": {
+                                            "type": "string"
+                                        },
+                                        "current_balance": {
+                                            "type": "integer"
+                                        },
+                                        "goal_amount": {
+                                            "type": "integer"
+                                        },
+                                        "description": {
+                                            "type": "string"
+                                        },
+                                        "is_achieved": {
+                                            "type": "boolean"
+                                        },
+                                        "created_at": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Tabungan kadita": {
+                                        "description": "Tabungan berhasil dibuat.",
+                                        "value": {
+                                            "id": "92acc81-5121-5wac-w124-3455129awraq",
+                                            "title": "Tabungan MacBook Air",
+                                            "current_balance": 0,
+                                            "goal_amount": 15000000,
+                                            "description": "Tabungan untuk beli MacBook Air",
+                                            "is_achieved": false,
+                                            "created_at": "2023-11-01"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Gagal tambah data tabungan user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Gagal tambah anggaran": {
+                                        "description": "Gagal menambah data tabungan user.",
+                                        "value": {
+                                            "errors": "validasi data gagal"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/savings/{savingId}": {
+            "put": {
+                "tags": ["Tabungan"],
+
+                "summary": "Update data tabungan user.",
+                "description": "Update data tabungan user.",
+                "parameters": [
+                    {
+                        "name": "savingId",
+                        "in": "path",
+                        "required": true,
+                        "description": "savingId digunakan untuk melakukan update data tabungan user sesuai dengan savingId",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/api/savings/9aae0706-a17f-467a-8170-51357b05d674"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "Berikut adalah data yang diperlukan pada request body untuk melakukan Update data tabungan user.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "title",
+                                    "goal_amount",
+                                    "description"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "integer"
+                                    },
+                                    "goal_amount": {
+                                        "type": "integer"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Update data tabungan kadita": {
+                                    "description": "Contoh request body update data tabungan kadita.",
+                                    "value": {
+                                        "title": "Tabungan MacBook Pro M2",
+                                        "goal_amount": 20000000,
+                                        "description": "Tabungan untuk beli MacBook Pro M2"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Berhasil update data anggaran user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "title": {
+                                            "type": "integer"
+                                        },
+                                        "current_balance": {
+                                            "type": "integer"
+                                        },
+                                        "goal_amount": {
+                                            "type": "integer"
+                                        },
+                                        "description": {
+                                            "type": "string"
+                                        },
+                                        "is_achieved": {
+                                            "type": "boolean"
+                                        },
+                                        "created_at": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Update anggaran kadita": {
+                                        "description": "Tagihan berhasil diupdate.",
+                                        "value": {
+                                            "id": "9aae0706-a17f-467a-8170-51357b05d674",
+                                            "title": "Tabungan MacBook Pro M2",
+                                            "current_balance": 0,
+                                            "goal_amount": 20000000,
+                                            "description": "Tabungan untuk beli MacBook Pro M2",
+                                            "is_achieved": false,
+                                            "created_at": "2023-11-01"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Gagal update data tabungan user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Gagal update anggaran": {
+                                        "description": "Gagal update data tabungan user.",
+                                        "value": {
+                                            "errors": "validasi data gagal"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Tabungan"],
+                "summary": "Hapus data tabungan user.",
+                "description": "Hapus data tabungan user.",
+                "parameters": [
+                    {
+                        "name": "savingId",
+                        "in": "path",
+                        "required": true,
+                        "description": "savingId digunakan untuk menghapus data tabungan user.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/api/savings/90qwd18-9217-5wac-w124-34818wada2"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data tabungan user berhasil dihapus.",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Hapus Berhasil": {
+                                        "value": {
+                                            "message": "data tabungan berhasil dihapus"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data tabungan user gagal dihapus karena data tabungan nya tidak ada.",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Hapus Berhasil": {
+                                        "value": {
+                                            "errors": "data tabungan tidak ditemukan"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/transactions/user/{userId}": {
+            "get": {
+                "tags": [
+                    "Transaksi Bebas (Tidak terkait anggaran ataupun tabungan)"
+                ],
+                "summary": "Get semua data transaksi user.",
+                "description": "Get semua data transaksi user.",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "description": "userId digunakan untuk mendapatkan data transaksi user tersebut.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/api/transactions/user/9asd71h-5121-5wac-w124-3455129awraq"
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": false,
+                        "description": "data date digunakan untuk mendapatkan data transaksi sesuai bulan dan tahun. Tapi query parameter ini tidak wajib.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/api/transactions/user/9asd71h-5121-5wac-w124-3455129awraq?date=2023-11-01"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data transaksi ditemukan.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string"
+                                            },
+                                            "saving_id": {
+                                                "type": "string"
+                                            },
+                                            "budget_id": {
+                                                "type": "string"
+                                            },
+                                            "bill_reminder_id": {
+                                                "type": "string"
+                                            },
+                                            "category": {
+                                                "type": "string"
+                                            },
+                                            "amount": {
+                                                "type": "integer"
+                                            },
+                                            "date_time": {
+                                                "type": "string"
+                                            },
+                                            "description": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Transaksi kadita": {
+                                        "description": "List data transaksi user (kadita).",
+                                        "value": [
+                                            {
+                                                "id": "9aae94c0-730a-4285-9252-446a49608431",
+                                                "saving_id": null,
+                                                "budget_id": null,
+                                                "bill_reminder_id": null,
+                                                "category": "Pendapatan",
+                                                "amount": 15000000,
+                                                "date_time": "2023-11-23 11:00:00",
+                                                "description": "Gajian Bulan November"
+                                            },
+                                            {
+                                                "id": "9aae953a-bed9-4544-af52-606f778468e0",
+                                                "saving_id": null,
+                                                "budget_id": "9aae9622-c60e-4528-b2ef-36dc50cc88c1",
+                                                "bill_reminder_id": null,
+                                                "category": "Pengeluaran",
+                                                "amount": 50000,
+                                                "date_time": "2023-11-23 11:00:00",
+                                                "description": "Beli setarlaik mlbb bulan november coy"
+                                            },
+                                            {
+                                                "id": "9aae9581-c828-43cd-92ed-3ef6aa387168",
+                                                "saving_id": null,
+                                                "budget_id": null,
+                                                "bill_reminder_id": null,
+                                                "category": "Pengeluaran",
+                                                "amount": 30000,
+                                                "date_time": "2023-11-23 11:00:00",
+                                                "description": "Beli diamond pass MLBB november (contoh anggaran yang dihapus, jadi budget_id nya null)"
+                                            },
+                                            {
+                                                "id": "9aafa994-0573-40ea-a1c1-08f5655e64c6",
+                                                "saving_id": null,
+                                                "budget_id": null,
+                                                "bill_reminder_id": null,
+                                                "category": "Pengeluaran",
+                                                "amount": 50000,
+                                                "date_time": "2023-11-23 11:00:00",
+                                                "description": "Beli cat rumah (ini contoh transaksi pengeluaran tapi tidak terhubung dengan anggaran)"
+                                            },
+                                            {
+                                                "id": "9aafacce-5a53-4913-955b-49c57faf3119",
+                                                "saving_id": "9sa7h12s-5a53-4913-955b-98suf2azs",
+                                                "budget_id": null,
+                                                "bill_reminder_id": null,
+                                                "category": "Tabungan",
+                                                "amount": 100000,
+                                                "date_time": "2023-11-23 11:00:00",
+                                                "description": "Tabungan beli kursi gaming"
+                                            },
+                                            {
+                                                "id": "9aafacce-5a53-4913-955b-49c57faf3119",
+                                                "saving_id": null,
+                                                "budget_id": null,
+                                                "bill_reminder_id": null,
+                                                "category": "Tabungan",
+                                                "amount": 50000,
+                                                "date_time": "2023-11-23 11:00:00",
+                                                "description": "Tabungan meja, cuma tabungannya udah didelete (contoh tabungan yang didelete, jadi saving_id nya null)"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data transaksi tidak ditemukan.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Transaksi kosong": {
+                                        "description": "Data transaksi tidak ditemukan.",
+                                        "value": {
+                                            "errors": "transaksi tidak ditemukan!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/transactions": {
+            "post": {
+                "tags": [
+                    "Transaksi Bebas (Tidak terkait anggaran ataupun tabungan)",
+                    "Transaksi Anggaran",
+                    "Transaksi Tabungan"
+                ],
+                "summary": "Tambah data transaksi user.",
+                "description": "Tambah data transaksi user.",
+                "requestBody": {
+                    "required": true,
+                    "description": "Berikut adalah data yang diperlukan pada request body untuk melakukan tambah data transaksi user.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "user_id",
+                                    "category",
+                                    "amount",
+                                    "date_time",
+                                    "description"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "budget_id": {
+                                        "type": "string"
+                                    },
+                                    "saving_id": {
+                                        "type": "string"
+                                    },
+                                    "bill_reminder_id": {
+                                        "type": "string"
+                                    },
+                                    "category": {
+                                        "type": "string"
+                                    },
+                                    "amount": {
+                                        "type": "integer"
+                                    },
+                                    "date_time": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Tambah data transaksi kadita (Pendapatan)": {
+                                    "description": "Contoh request body untuk tambah data transaksi kadita",
+                                    "value": {
+                                        "user_id": "8as7d1h-5121-5wac-w124-3455129awraq",
+                                        "category": "Pendapatan",
+                                        "amount": 20000000,
+                                        "date_time": "2023-11-05 11:30:00",
+                                        "description": "Gajian Bulan November"
+                                    }
+                                },
+                                "Tambah data transaksi kadita (Pengeluaran Bebas)": {
+                                    "description": "Contoh request body untuk tambah data transaksi kadita",
+                                    "value": {
+                                        "user_id": "8as7d1h-5121-5wac-w124-3455129awraq",
+                                        "category": "Pengeluaran",
+                                        "amount": 70000,
+                                        "date_time": "2023-11-07 11:30:00",
+                                        "description": "Beli aqua proof, genteng bochor bochor"
+                                    }
+                                },
+                                "Tambah data transaksi kadita (Pengeluaran Anggaran)": {
+                                    "description": "Contoh request body untuk tambah data transaksi kadita",
+                                    "value": {
+                                        "user_id": "8as7d1h-5121-5wac-w124-3455129awraq",
+                                        "budget_id": "92ad81h-6896-8sja-x9s2-9s47s8dsh",
+                                        "category": "Pengeluaran",
+                                        "amount": 80000,
+                                        "date_time": "2023-11-09 11:30:00",
+                                        "description": "Pengeluaran Anggaran Kendaraan Ganti Oli Motor"
+                                    }
+                                },
+                                "Tambah data transaksi kadita (Pengeluaran Tagihan)": {
+                                    "description": "Contoh request body untuk tambah data transaksi kadita",
+                                    "value": {
+                                        "user_id": "8as7d1h-5121-5wac-w124-3455129awraq",
+                                        "bill_reminder_id": "92ad81h-6896-8sja-x9s2-9s47s8dsh",
+                                        "category": "Pengeluaran",
+                                        "amount": 1000000,
+                                        "date_time": "2023-11-09 11:30:00",
+                                        "description": "Cicil iPhone 19 Pro Max"
+                                    }
+                                },
+                                "Tambah data transaksi kadita (Pengeluaran Tagihan menggunakan Anggaran)": {
+                                    "description": "Contoh request body untuk tambah data transaksi kadita",
+                                    "value": {
+                                        "user_id": "8as7d1h-5121-5wac-w124-3455129awraq",
+                                        "budget_id": "98sd17-01jd-6fs1-f8sa-dsad82dh",
+                                        "bill_reminder_id": "92ad81h-6896-8sja-x9s2-9s47s8dsh",
+                                        "category": "Pengeluaran",
+                                        "amount": 1000000,
+                                        "date_time": "2023-11-09 11:30:00",
+                                        "description": "Cicil iPhone 19 Pro Max pakai anggaran cicilan bulanan"
+                                    }
+                                },
+                                "Tambah data transaksi kadita (Tabungan)": {
+                                    "description": "Contoh request body untuk tambah data transaksi kadita",
+                                    "value": {
+                                        "user_id": "8as7d1h-5121-5wac-w124-3455129awraq",
+                                        "budget_id": "92ad81h-6896-8sja-x9s2-9s47s8dsh",
+                                        "category": "Tabungan",
+                                        "amount": 100000,
+                                        "date_time": "2023-11-07 11:30:00",
+                                        "description": "Tambah tabungan untuk beli meja belajar"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Berhasil tambah data anggaran user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "saving_id": {
+                                            "type": "string"
+                                        },
+                                        "budget_id": {
+                                            "type": "string"
+                                        },
+                                        "category": {
+                                            "type": "string"
+                                        },
+                                        "amount": {
+                                            "type": "integer"
+                                        },
+                                        "date_time": {
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Transaksi kadita (Pendapatan)": {
+                                        "description": "Transaksi berhasil dibuat.",
+                                        "value": {
+                                            "id": "5v1ae7a3-5121-5wac-w124-3455129awraq",
+                                            "saving_id": null,
+                                            "budget_id": null,
+                                            "bill_reminder_id": null,
+                                            "category": "Pendapatan",
+                                            "amount": 20000000,
+                                            "date_time": "2023-11-05 11:30:00",
+                                            "description": "Gajian Bulan November"
+                                        }
+                                    },
+                                    "Transaksi kadita (Pengeluaran Bebas)": {
+                                        "description": "Transaksi berhasil dibuat.",
+                                        "value": {
+                                            "id": "9aafacce-5a53-4913-955b-49c57faf3119",
+                                            "saving_id": null,
+                                            "budget_id": null,
+                                            "bill_reminder_id": null,
+                                            "category": "Pengeluaran",
+                                            "amount": 70000,
+                                            "date_time": "2023-11-07 11:00:00",
+                                            "description": "Beli aqua proof, genteng bochor bochor"
+                                        }
+                                    },
+                                    "Transaksi kadita (Pengeluaran Anggaran)": {
+                                        "description": "Transaksi berhasil dibuat.",
+                                        "value": {
+                                            "id": "9aafacce-5a53-4913-955b-49c57faf3119",
+                                            "saving_id": null,
+                                            "budget_id": "9aae9435-8287-48b0-a2bb-e02de74691b0",
+                                            "bill_reminder_id": null,
+                                            "category": "Pengeluaran",
+                                            "amount": 80000,
+                                            "date_time": "2023-11-09 11:00:00",
+                                            "description": "Pengeluaran Anggaran Kendaraan Ganti Oli Motor"
+                                        }
+                                    },
+                                    "Transaksi kadita (Pengeluaran Tagihan)": {
+                                        "description": "Transaksi berhasil dibuat.",
+                                        "value": {
+                                            "id": "9aafacce-5a53-4913-955b-49c57faf3119",
+                                            "saving_id": null,
+                                            "budget_id": null,
+                                            "bill_reminder_id": "92ad81h-6896-8sja-x9s2-9s47s8dsh",
+                                            "category": "Pengeluaran",
+                                            "amount": 1000000,
+                                            "date_time": "2023-11-09 11:30:00",
+                                            "description": "Cicil iPhone 19 Pro Max"
+                                        }
+                                    },
+                                    "Transaksi kadita (Pengeluaran Tagihan menggunakan Anggaran)": {
+                                        "description": "Transaksi berhasil dibuat.",
+                                        "value": {
+                                            "id": "9aafacce-5a53-4913-955b-49c57faf3119",
+                                            "saving_id": null,
+                                            "budget_id": "98sd17-01jd-6fs1-f8sa-dsad82dh",
+                                            "bill_reminder_id": "92ad81h-6896-8sja-x9s2-9s47s8dsh",
+                                            "category": "Pengeluaran",
+                                            "amount": 1000000,
+                                            "date_time": "2023-11-09 11:30:00",
+                                            "description": "Cicil iPhone 19 Pro Max pakai anggaran cicilan bulanan"
+                                        }
+                                    },
+                                    "Transaksi kadita (Tabungan)": {
+                                        "description": "Transaksi berhasil dibuat.",
+                                        "value": {
+                                            "id": "9aafacce-5a53-4913-955b-49c57faf3119",
+                                            "saving_id": "9aae9435-8287-48b0-a2bb-e02de74691b0",
+                                            "budget_id": null,
+                                            "bill_reminder_id": null,
+                                            "category": "Tabungan",
+                                            "amount": 100000,
+                                            "date_time": "2023-11-07 11:00:00",
+                                            "description": "Tambah tabungan meja belajar"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Gagal tambah data transaksi user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Gagal tambah transaksi": {
+                                        "description": "Gagal menambah data transaksi user.",
+                                        "value": {
+                                            "errors": "validasi data gagal"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/transactions/{transactionId}": {
+            "put": {
+                "tags": [
+                    "Transaksi Bebas (Tidak terkait anggaran ataupun tabungan)",
+                    "Transaksi Anggaran",
+                    "Transaksi Tabungan"
+                ],
+                "summary": "Update data transaksi user.",
+                "description": "Update data transaksi user.",
+                "parameters": [
+                    {
+                        "name": "transactionId",
+                        "in": "path",
+                        "required": true,
+                        "description": "transactionId digunakan untuk melakukan update data transaksi user sesuai dengan transactionId",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/api/transactions/90qwd18-9217-5wac-w124-34818wada2"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "Berikut adalah data yang diperlukan pada request body untuk melakukan Update data transaksi user.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["amount", "description"],
+                                "properties": {
+                                    "budget_id": {
+                                        "type": "string"
+                                    },
+                                    "saving_id": {
+                                        "type": "string"
+                                    },
+                                    "bill_reminder_id": {
+                                        "type": "string"
+                                    },
+                                    "amount": {
+                                        "type": "integer"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Update data transaksi kadita (Pendapatan)": {
+                                    "description": "Contoh request body update data transaksi dengan kategori Pendapatan. Tidak perlu kirim saving_id atau budget_id.",
+                                    "value": {
+                                        "amount": 25000000,
+                                        "description": "Gaji bulan november udah naik ygy jadi 25jt"
+                                    }
+                                },
+                                "Update data transaksi kadita (Pengeluaran Bebas)": {
+                                    "description": "Contoh request body update data transaksi dengan kategori Pengeluaran tetapi tidak terhubung dengan anggaran apapun, jadi budget_id tidak usah dikirim atau dikirim dengan value null.",
+                                    "value": {
+                                        "amount": 100000,
+                                        "description": "Beli aqua proof, udah naik rek dari 70k jadi 100k"
+                                    }
+                                },
+                                "Update data transaksi kadita (Pengeluaran Anggaran)": {
+                                    "description": "Contoh request body update data transaksi dengan kategori Pengeluaran yang terhubung dengan anggaran. Jadi wajib mengirimkan budget_id pada body",
+                                    "value": {
+                                        "budget_id": "9aae9435-8287-48b0-a2bb-e02de74691b0",
+                                        "amount": 50000,
+                                        "description": "Ganti oli motor dapet diskon bulan ini xixixi"
+                                    }
+                                },
+                                "Update data transaksi kadita (Pengeluaran Tagihan)": {
+                                    "description": "Contoh request body update data transaksi dengan kategori Pengeluaran yang terhubung dengan anggaran. Jadi wajib mengirimkan budget_id pada body",
+                                    "value": {
+                                        "bill_reminder_id": "9aae9435-8287-48b0-a2bb-e02de74691b0",
+                                        "amount": 500000,
+                                        "description": "Cicil iphone 19 pro max"
+                                    }
+                                },
+                                "Update data transaksi kadita (Pengeluaran Tagihan menggunakan Anggaran)": {
+                                    "description": "Contoh request body update data transaksi dengan kategori Pengeluaran yang terhubung dengan anggaran. Jadi wajib mengirimkan budget_id pada body",
+                                    "value": {
+                                        "budget_id": "9aae9435-8287-48b0-a2bb-e02de74691b0",
+                                        "bill_reminder_id": "9aae9435-8287-48b0-a2bb-e02de74691b0",
+                                        "amount": 500000,
+                                        "description": "Cicil iphone 19 pro max"
+                                    }
+                                },
+                                "Update data transaksi kadita (Tabungan)": {
+                                    "description": "Contoh request body update data transaksi dengan kategori Tabungan. Jadi wajib mengirimkan saving_id pada body",
+                                    "value": {
+                                        "saving_id": "9aae9435-8287-48b0-a2bb-e02de74691b0",
+                                        "amount": 200000,
+                                        "description": "Tambah tabungan meja belajar bulan november 2x lipat biar lebih cepat"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Berhasil update data transaksi user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "saving_id": {
+                                            "type": "string"
+                                        },
+                                        "budget_id": {
+                                            "type": "string"
+                                        },
+                                        "category": {
+                                            "type": "string"
+                                        },
+                                        "amount": {
+                                            "type": "integer"
+                                        },
+                                        "date_time": {
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Transaksi kadita (Pendapatan)": {
+                                        "description": "Transaksi berhasil diupdate.",
+                                        "value": {
+                                            "id": "5v1ae7a3-5121-5wac-w124-3455129awraq",
+                                            "saving_id": null,
+                                            "budget_id": null,
+                                            "category": "Pendapatan",
+                                            "amount": 25000000,
+                                            "date_time": "2023-11-05 11:30:00",
+                                            "description": "Gaji bulan november udah naik ygy jadi 25jt"
+                                        }
+                                    },
+                                    "Transaksi kadita (Pengeluaran Bebas)": {
+                                        "description": "Transaksi berhasil diupdate.",
+                                        "value": {
+                                            "id": "9aafacce-5a53-4913-955b-49c57faf3119",
+                                            "saving_id": null,
+                                            "budget_id": null,
+                                            "category": "Pengeluaran",
+                                            "amount": 100000,
+                                            "date_time": "2023-11-07 11:00:00",
+                                            "description": "Beli aqua proof, udah naik rek dari 70k jadi 100k"
+                                        }
+                                    },
+                                    "Transaksi kadita (Pengeluaran Anggaran)": {
+                                        "description": "Transaksi berhasil diupdate.",
+                                        "value": {
+                                            "id": "9aafacce-5a53-4913-955b-49c57faf3119",
+                                            "saving_id": null,
+                                            "budget_id": "9aae9435-8287-48b0-a2bb-e02de74691b0",
+                                            "category": "Pengeluaran",
+                                            "amount": 50000,
+                                            "date_time": "2023-11-09 11:00:00",
+                                            "description": "Ganti oli motor dapet diskon bulan ini xixixi"
+                                        }
+                                    },
+                                    "Transaksi kadita (Tabungan)": {
+                                        "description": "Transaksi berhasil diupdate.",
+                                        "value": {
+                                            "id": "9aafacce-5a53-4913-955b-49c57faf3119",
+                                            "saving_id": "9aae9435-8287-48b0-a2bb-e02de74691b0",
+                                            "budget_id": null,
+                                            "category": "Tabungan",
+                                            "amount": 200000,
+                                            "date_time": "2023-11-07 11:00:00",
+                                            "description": "Tambah tabungan meja belajar bulan november 2x lipat biar lebih cepat"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Gagal update data transaksi user.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Gagal update anggaran": {
+                                        "description": "Gagal update data transaksi user.",
+                                        "value": {
+                                            "errors": "validasi data gagal"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Transaksi Bebas (Tidak terkait anggaran ataupun tabungan)",
+                    "Transaksi Anggaran",
+                    "Transaksi Tabungan"
+                ],
+                "summary": "Hapus data transaksi user.",
+                "description": "Hapus data transaksi user.",
+                "parameters": [
+                    {
+                        "name": "transactionId",
+                        "in": "path",
+                        "required": true,
+                        "description": "trasanctionId digunakan untuk menghapus data transaksi user.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/api/trasaction/90qwd18-9217-5wac-w124-34818wada2"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data transaksi user berhasil dihapus.",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Hapus Berhasil": {
+                                        "value": {
+                                            "message": "Data transaksi berhasil dihapus"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/transactions/budget/{budgetId}": {
+            "get": {
+                "tags": ["Transaksi Anggaran"],
+                "summary": "Get semua data transaksi anggaran user.",
+                "description": "Get semua data transaksi sesuai dengan budgetId.",
+                "parameters": [
+                    {
+                        "name": "budgetId",
+                        "in": "path",
+                        "required": true,
+                        "description": "budgetId digunakan untuk mendapatkan data transaksi anggaran user.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/api/transactions/budget/9asd71h-5121-5wac-w124-3455129awraq"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data transaksi ditemukan.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string"
+                                            },
+                                            "saving_id": {
+                                                "type": "string"
+                                            },
+                                            "budget_id": {
+                                                "type": "string"
+                                            },
+                                            "category": {
+                                                "type": "string"
+                                            },
+                                            "amount": {
+                                                "type": "integer"
+                                            },
+                                            "date_time": {
+                                                "type": "string"
+                                            },
+                                            "description": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Transaksi Anggaran kadita": {
+                                        "description": "List data transaksi Anggaran.",
+                                        "value": [
+                                            {
+                                                "id": "9aae953a-bed9-4544-af52-606f778468e0",
+                                                "saving_id": null,
+                                                "budget_id": "9asd71h-5121-5wac-w124-3455129awraq",
+                                                "category": "Pengeluaran",
+                                                "amount": 50000,
+                                                "date_time": "2023-11-23 11:00:00",
+                                                "description": "Beli setarlaik mlbb bulan november coy"
+                                            },
+                                            {
+                                                "id": "9aae9581-c828-43cd-92ed-3ef6aa387168",
+                                                "saving_id": null,
+                                                "budget_id": "9asd71h-5121-5wac-w124-3455129awraq",
+                                                "category": "Pengeluaran",
+                                                "amount": 30000,
+                                                "date_time": "2023-11-23 11:00:00",
+                                                "description": "Beli diamond pass MLBB november"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data transaksi tidak ditemukan.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Transaksi kosong": {
+                                        "description": "Data transaksi tidak ditemukan.",
+                                        "value": {
+                                            "errors": "transaksi tidak ditemukan!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/transactions/saving/{savingId}": {
+            "get": {
+                "tags": ["Transaksi Tabungan"],
+                "summary": "Get semua data transaksi tabungan user.",
+                "description": "Get semua data transaksi tabungan user.",
+                "parameters": [
+                    {
+                        "name": "savingId",
+                        "in": "path",
+                        "required": true,
+                        "description": "savingId digunakan untuk mendapatkan data transaksi user sesuai id tabungan (savingId).",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/api/transactions/saving/9asd71h-5121-5wac-w124-3455129awraq"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data transaksi tabungan ditemukan.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string"
+                                            },
+                                            "saving_id": {
+                                                "type": "string"
+                                            },
+                                            "budget_id": {
+                                                "type": "string"
+                                            },
+                                            "category": {
+                                                "type": "string"
+                                            },
+                                            "amount": {
+                                                "type": "integer"
+                                            },
+                                            "date_time": {
+                                                "type": "string"
+                                            },
+                                            "description": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Transaksi tabungan kadita": {
+                                        "description": "List data transaksi tabungan user (kadita).",
+                                        "value": [
+                                            {
+                                                "id": "9aafacce-5a53-4913-955b-49c57faf3119",
+                                                "saving_id": "9asd71h-5121-5wac-w124-3455129awraq",
+                                                "budget_id": null,
+                                                "category": "Tabungan",
+                                                "amount": 100000,
+                                                "date_time": "2023-11-05 11:00:00",
+                                                "description": "Tabungan beli meja belajar"
+                                            },
+                                            {
+                                                "id": "9aafacce-5a53-4913-955b-49c57faf3119",
+                                                "saving_id": "9asd71h-5121-5wac-w124-3455129awraq",
+                                                "budget_id": null,
+                                                "category": "Tabungan",
+                                                "amount": 200000,
+                                                "date_time": "2023-11-23 11:00:00",
+                                                "description": "Tabungan meja belajar 2x lipat supaya lebih cepat belinya."
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data transaksi tidak ditemukan.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Transaksi kosong": {
+                                        "description": "Data transaksi tidak ditemukan.",
+                                        "value": {
+                                            "errors": "transaksi tidak ditemukan!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
